@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:MinesPuzzle"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!--<FontFamily ="Arial Black"/>-->
     </Application.Resources>
 </Application>

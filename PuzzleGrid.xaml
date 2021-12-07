@@ -1,100 +1,113 @@
-﻿<UserControl x:Class="MinesPuzzle.PuzzleGrid"
+﻿<!--<UserControl-->
+<Grid
+    x:Class="MinesPuzzle.PuzzleGrid"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MinesPuzzle"
+        xmlns:local="clr-namespace:MinesPuzzle"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
-             Background="Transparent">
-    
-    <Grid>
-        <Grid.Resources>
-            <SolidColorBrush x:Name="HiddenBrush" x:Key="HiddenBrush" Color="Transparent"/>
+             Background="Transparent"
+             Loaded="PuzzleGridLoaded"
+            Grid.Column="1" Grid.Row="1"
+            >
 
-            <Style x:Key="PuzzleButtonStyle">
-                <Setter Property="Button.Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <ControlTemplate.Resources>
-                                <!--  ?? Piece Entry and Exit storyboards ??
+    <!--xmlns:local="clr-namespace:MinesPuzzle"-->
+
+    <!--<Grid>-->
+    <Grid.Resources>
+        <SolidColorBrush x:Name="HiddenBrush" x:Key="HiddenBrush" Color="Transparent"/>
+        <SolidColorBrush x:Name="HiddenTileBrush" x:Key="HiddenTileBrush" Color="SlateBlue"/>
+
+        <Style x:Key="PuzzleButtonStyle">
+            <Setter Property="Button.Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <ControlTemplate.Resources>
+                            <!--  ?? Piece Entry and Exit storyboards ??
                                 change to reveal, new and endgame storyboards?-->
 
-                                <Storyboard x:Key="PieceEntryStoryboard">
-
-                                    <DoubleAnimation To="0.4" Duration="0:0:0.3"
-                                                 Storyboard.TargetName="TheTemplateRoot"
+                            <Storyboard x:Key="PieceEntryStoryboard">
+                                <!--    Border1ControlTemplateResource is a yellow border  -->
+                                <DoubleAnimation To="0.4" Duration="0:0:0.3"
+                                                 Storyboard.TargetName="Border1ControlTemplateResource"
                                                  Storyboard.TargetProperty="Opacity" />
 
-                                    <ThicknessAnimation To="5.0" Duration="0:0:0.3"
-                                                    Storyboard.TargetName="TheTemplateRoot"
+                                <ThicknessAnimation To="5.0" Duration="0:0:0.3"
+                                                    Storyboard.TargetName="Border1ControlTemplateResource"
                                                     Storyboard.TargetProperty="BorderThickness" />
-                                    
-                                    <!--  ?? What does this do??  -->
-                                    <DoubleAnimation To="0" Duration="0:0:0.3"
-                                                 Storyboard.TargetName="TheTemplateRoot"
+
+                                <!--  ?? What does this do??  -->
+                                <DoubleAnimation To="0" Duration="0:0:0.3"
+                                                 Storyboard.TargetName="Border1ControlTemplateResource"
                                                  Storyboard.TargetProperty="(Canvas.RenderTransform).(TranslateTransform.X)" />
 
-                                </Storyboard>
+                            </Storyboard>
 
-                                <Storyboard x:Key="PieceExitStoryboard">
+                            <Storyboard x:Key="PieceExitStoryboard">
 
-                                    <DoubleAnimation To="1.0" Duration="0:0:0.3"
-                                                 Storyboard.TargetName="TheTemplateRoot"
+                                <DoubleAnimation To="1.0" Duration="0:0:0.3"
+                                                 Storyboard.TargetName="Border1ControlTemplateResource"
                                                  Storyboard.TargetProperty="Opacity" />
 
-                                    <ThicknessAnimation To="0.0" Duration="0:0:0.3"
-                                                    Storyboard.TargetName="TheTemplateRoot"
+                                <ThicknessAnimation To="0.0" Duration="0:0:0.3"
+                                                    Storyboard.TargetName="Border1ControlTemplateResource"
                                                     Storyboard.TargetProperty="BorderThickness" />
 
-                                </Storyboard>
+                            </Storyboard>
 
-                            </ControlTemplate.Resources>
+                        </ControlTemplate.Resources>
 
-                            <Border x:Name="TheTemplateRoot" 
+                        <Border x:Name="Border1ControlTemplateResource" 
                                     BorderBrush="Black"
                                     BorderThickness="0.0"
                                     SnapsToDevicePixels="True">
-                                <Border.RenderTransform>
-                                    <!--  Set up for animation.  -->
-                                    <TranslateTransform X="0" Y="0"/>
-                                </Border.RenderTransform>
+                            <Border.RenderTransform>
+                                <!--  Set up for animation.  -->
+                                <TranslateTransform X="0" Y="0"/>
+                            </Border.RenderTransform>
 
-                                <TextBlock 
-                                    Foreground="{DynamicResource NumberLabelBrush}"
+                            <!--        Guessing that this is for numbered slidepuzzle tiles.-->
+                            <!--<TextBlock--> 
+                                    <!--Foreground="{DynamicResource NumberLabelBrush}"
                                     FontSize="24" FontWeight="Bold">
                                     <ContentPresenter/>
-                                </TextBlock>
-                                
-                            </Border>
-                            
-                            
-                            <ControlTemplate.Triggers>
-                                <!--  ?? Canvas ??  What canvas?
-                                But it does work as ButtonEnter.  -->
-                                <EventTrigger RoutedEvent="Canvas.MouseEnter">
-                                    <EventTrigger.Actions>
-                                        <BeginStoryboard Storyboard="{StaticResource PieceEntryStoryboard}" />
-                                    </EventTrigger.Actions>
-                                </EventTrigger>
-                                
-                                <!--  Button.MouseLeave  -->
-                                <EventTrigger RoutedEvent="Canvas.MouseLeave">
-                                    <EventTrigger.Actions>
-                                        <BeginStoryboard Storyboard="{StaticResource PieceExitStoryboard}" />
-                                    </EventTrigger.Actions>
-                                </EventTrigger>
-                            </ControlTemplate.Triggers>
-                            
-                            
-                            
-                            
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
+                            </TextBlock>-->
 
-        </Grid.Resources>
-        
-            
-    </Grid>
-</UserControl>
+                        </Border>
+
+
+                        <ControlTemplate.Triggers>
+                            <!--  ?? Canvas ??  What canvas?
+                                But it does work as ButtonEnter.  -->
+                            <EventTrigger RoutedEvent="Canvas.MouseEnter">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard Storyboard="{StaticResource PieceEntryStoryboard}" />
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+
+                            <!--  Button.MouseLeave  -->
+                            <EventTrigger RoutedEvent="Canvas.MouseLeave">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard Storyboard="{StaticResource PieceExitStoryboard}" />
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </ControlTemplate.Triggers>
+
+
+
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Grid.Resources>
+    
+    
+    
+    
+    
+
+</Grid>
+<!--</UserControl>-->

@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace MinesPuzzle
 {
-    internal enum CellStatus
+    /// <summary>
+    /// Provides an enum value for a PuzzleCell struct property.
+    /// Values from -2 to 1.
+    /// </summary>
+    public enum CellStatus
     {
-        Boom,
+        /*  Boom would be revealed, suspected has to be hidden; 
+        *  clicking on a tile will reveal one or more tiles and maybe a boom from a mine.
+        */
+        Boom = -2,
         Revealed,
         Hidden,
         Suspected

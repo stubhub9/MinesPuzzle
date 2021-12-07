@@ -6,13 +6,21 @@ using System.Threading.Tasks;
 
 namespace MinesPuzzle
 {
-    internal struct PuzzleCell
+    /// <summary>
+    ///  Provides data for PuzzleGrid button tags and the PuzzleLogic matrix.
+    ///  ___int Row, Col,
+    ///  ___enum CellValue, CellStatus
+    /// </summary>
+    public struct PuzzleCell
     {
-        public int Row { get; }
-        public int Col { get; }
-        public CellValue CellValue { get; }
+        public int Row { get; set; }
+        public int Col { get; set; }
+        public CellValue CellValue { get; set; }
         public CellStatus CellStatus { get; set; }
 
+        //  Constructors  ******************************************************************************
+
+        //  Used for mine placement.
         public PuzzleCell ( int row, int col, CellValue value, CellStatus status )
         {
             Row = row;
@@ -21,7 +29,14 @@ namespace MinesPuzzle
             CellStatus = status;
         }
 
-
+        // Used for updating the CellValue for the number of mines adjacent.
+        public PuzzleCell ( int row, int col, int cellValue, CellStatus status )
+        {
+            Row = row;
+            Col = col;
+            CellValue = (CellValue) cellValue;
+            CellStatus = status;
+        }
 
     }
 }

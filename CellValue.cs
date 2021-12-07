@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace MinesPuzzle
 {
-    internal enum CellValue
+    /// <summary>
+    ///  Provides an enum value for a PuzzleCell stuct property.
+    ///  Values from -1 (is a mine) to 8 (number of mines adjacent).
+    /// </summary>
+    public enum CellValue
     {
         //  Number of mines adjacent to cell;
-        //  or if mine, or boom.
-        //Boom = -2,
+        //  or if mine.
         Mine = -1,
         Zero,
         One,
