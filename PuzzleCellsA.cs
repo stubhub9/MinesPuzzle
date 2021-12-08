@@ -11,8 +11,10 @@ namespace MinesPuzzle
         #region  Events group
         //  Delegate for PuzzleCells 
 
-        public delegate void UpdateHandler ( string updateString );
-        public event UpdateHandler UpdateTilesTillClear; 
+        public delegate void UpdateHandler ( string updateString, PuzzleCell updatedCell );
+        public event UpdateHandler UpdateTilesTillClear;
+        //  Update the UI Hidden Tiles Counter with a delegate/ event combo.
+        //TODO:?  Could add a List <PuzzleCell> for result returns; Tile returns. 
 
         #endregion
 
@@ -38,7 +40,7 @@ namespace MinesPuzzle
         public PuzzleCellsA ( int rows = 10, int mines = 15 )
         {
             Constructor_InitializeVars ( rows, mines );
-            Constructor_BuildArray ( rows, mines );
+            Constructor_InitializeArray ( rows, mines );
             Constructor_SetMines ( rows, mines );
 
         }
@@ -46,10 +48,10 @@ namespace MinesPuzzle
         private void Constructor_InitializeVars ( int rows, int mines )
         {
             _hiddenCellsCount = ( rows * rows ) - mines;
-            _susCellsCount = 0;
+            _susCellsCount = ( rows * rows );
         }
 
-        private void Constructor_BuildArray ( int rows, int mines )
+        private void Constructor_InitializeArray ( int rows, int mines )
         {
             _puzzleCellArray = new PuzzleCell [rows, rows];
             for ( int r = 0; r < rows; r++ )
@@ -79,7 +81,7 @@ namespace MinesPuzzle
                     _puzzleCellArray [randomRow, randomCol].CellValue = CellValue.Mine;
                     //  Update the CellValue of adjacent cells.
                     Array_AdjacentCells ( randomRow, randomCol, AdjacentCellsTask.PlacedMine );
-
+                    //  Ignored the return; could have assigned a discard?
                     newMines++;
                 }
             } while ( newMines < mines );
@@ -89,45 +91,98 @@ namespace MinesPuzzle
         #endregion
 
         //  Updates CellValues next to mines or clears.
-        private enum AdjacentCellsTask { RevealedClearCell, PlacedMine }
-        private void Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
+        private enum AdjacentCellsTask { ClearCellRevealed, PlacedMine }
+        private List<PuzzleCell> Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
         {
-            //  Evaluate valid array addresses.
-            var rowMax = ( ( row + 1 ) <= _puzzleCellArray.GetLength ( 0 ) ? ( row + 1 ) : row );
-            var colMax = ( ( col + 1 ) <= _puzzleCellArray.GetLength ( 1 ) ? ( col + 1 ) : col );
-            var rowMin = ( ( row - 1 ) >= 0 ? ( row - 1 ) : row );
-            var colMin = ( ( col - 1 ) >= 0 ? ( col - 1 ) : col );
-
-            if ( task == AdjacentCellsTask.PlacedMine )
+            var returnCellList = new List<PuzzleCell> ();
+            var zeroCellList = new List<PuzzleCell> ();
+            bool continueDoLoop;
+            do
             {
-                //_puzzleCellArray [row, col].CellValue = CellValue.Mine;  //  redundant?
+                continueDoLoop = false;
+                //  Evaluate valid array addresses.
+                var rowMax = ( ( row + 1 ) <= _puzzleCellArray.GetLength ( 0 ) ? ( row + 1 ) : row );
+                var colMax = ( ( col + 1 ) <= _puzzleCellArray.GetLength ( 1 ) ? ( col + 1 ) : col );
+                var rowMin = ( ( row - 1 ) >= 0 ? ( row - 1 ) : row );
+                var colMin = ( ( col - 1 ) >= 0 ? ( col - 1 ) : col );
+
+                #region  r & c loops
                 for ( int r = rowMin; r < rowMax; r++ )
                 {
                     for ( int c = colMin; c < colMax; c++ )
                     {
-                        if ( _puzzleCellArray [r, c].CellValue != CellValue.Mine )
+
+
+                        if ( task == AdjacentCellsTask.PlacedMine )
                         {
-                            //  Adjacent cells are now adjacent to an additional mine.
-                            _puzzleCellArray [r, c].CellValue++;
+                            if ( _puzzleCellArray [r, c].CellValue != CellValue.Mine )
+                            {
+                                //  Adjacent cells are now adjacent to an additional mine.
+                                _puzzleCellArray [r, c].CellValue++;
+                            }  //  Returns an unused, empty List <PuzzleCell>.
                         }
+
+                        #region CellValueZero Task
+                        else if ( ( task == AdjacentCellsTask.ClearCellRevealed ) && ( ( r != row ) && ( c != col ) ) )
+                        { //  Return a list of newly revealed cells, adjacent to but not including the selected cell.
+
+                            if ( _puzzleCellArray [r, c].CellStatus == CellStatus.Suspected )
+                            {//  Ignore return, and cell is now hidden.
+                                ToggleCellStatusAndSusCellsCount ( r, c );
+                            }
+
+                            if ( _puzzleCellArray [r, c].CellStatus == CellStatus.Hidden )
+                            { //  Cell is now revealed and add to return list.
+                                _puzzleCellArray [r, c].CellStatus = CellStatus.Revealed;
+                                returnCellList.Add ( _puzzleCellArray [r, c] );
+
+                                if ( _puzzleCellArray [r, c].CellValue == CellValue.Zero )
+                                {//  Add another CellValue.Zero bonus reveal.
+                                    zeroCellList.Add ( _puzzleCellArray [r, c] );
+                                }
+                            }
+                        }
+                        #endregion//  End ClearCellRevealed
                     }
                 }
-            }
+                #endregion//  End of r,c loops.
 
-            else if ( task == AdjacentCellsTask.RevealedClearCell )
-            {
-                //  Update adjacent cells of a CellValue.ZeroRevealed event to CellStatus. Revealed
-                //  Supply adjacent cells of a CellValue.ZeroRevealed event to the UpdateList.
-            }
-
+                if ( zeroCellList.Count != 0 )
+                {
+                    row = zeroCellList [0].Row;
+                    col = zeroCellList [0].Col;
+                    zeroCellList.RemoveAt ( 0 );
+                    continueDoLoop = true;
+                }
+            } while ( continueDoLoop );
+            return returnCellList;
         }
 
 
         public List<PuzzleCell> UpdateSelectedCell ( int row, int col )
         {
+            if ( _puzzleCellArray [row, col].CellStatus == CellStatus.Hidden )
+            {
+
+                switch ( _puzzleCellArray [row, col].CellValue )
+                {
+                    case CellValue.Mine:
+                        // Proceed to game lost.
+
+                        break;
+                    case CellValue.Zero:
+                        //  Proceed to revealed cell with CellValue.Zero task.
+
+                        break;
+                    default:
+                        //  Reveal this cell.
+
+                        break;
+                }
+
+            }
+
             var updatedCells = new List<PuzzleCell> ();
-
-
 
             return updatedCells;
         }
@@ -135,26 +190,27 @@ namespace MinesPuzzle
 
         public List<PuzzleCell> ToggleCellStatusAndSusCellsCount ( int row, int col )
         {
-            var updatedCells = new List<PuzzleCell> ();
 
-            var toggledCell = _puzzleCellArray [row, col];
-            switch ( toggledCell.CellStatus )
+            //var toggledCell = _puzzleCellArray [row, col];
+            //switch ( toggledCell.CellStatus )
+            switch ( _puzzleCellArray [row, col].CellStatus )
             {
                 //  Only hidden and suspected cells are affected, ignoring all others.
                 case CellStatus.Hidden:
-                    toggledCell.CellStatus = CellStatus.Suspected;
-                    //_suspectedCellsCountdown--;
+                    _puzzleCellArray [row, col].CellStatus = CellStatus.Suspected;
+                    _susCellsCount--;
                     break;
 
                 case CellStatus.Suspected:
-                    toggledCell.CellStatus = CellStatus.Hidden;
-                    //_suspectedCellsCountdown++;
+                    _puzzleCellArray [row, col].CellStatus = CellStatus.Hidden;
+                    _susCellsCount++;
                     break;
             }
+            //  Update the MainWindow display and the right clicked tile; with an event.
+            UpdateTilesTillClear?.Invoke ( _susCellsCount.ToString (), _puzzleCellArray [row, col] );
             //  Returns an updated cell for the button's tag.
-            //return toggledCell;
-
-
+            var updatedCells = new List<PuzzleCell> ();
+            updatedCells.Add ( _puzzleCellArray [row, col] );
             return updatedCells;
         }
 
