@@ -58,12 +58,10 @@
     <Compile Include="CellStatus.cs" />
     <Compile Include="CellValue.cs" />
     <Compile Include="PuzzleCell.cs" />
-    <Compile Include="PuzzleCellsB.cs" />
     <Compile Include="PuzzleCells.cs" />
     <Compile Include="PuzzleGrid.xaml.cs">
       <DependentUpon>PuzzleGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PuzzleLogicB.cs" />
     <Compile Include="PuzzleLogic.cs" />
     <Compile Include="PuzzleStatus.cs" />
     <Page Include="MainWindow.xaml">

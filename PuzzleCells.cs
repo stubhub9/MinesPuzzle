@@ -152,6 +152,7 @@ namespace MinesPuzzle
             }
             ////  Return a Tuple.
             //return (updatedCells, _haveBoom);
+
             return updatedCells;
         }
 

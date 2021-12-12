@@ -121,7 +121,7 @@ namespace MinesPuzzle
 
 
 
-        public void TileWasRightClicked ( int row, int col )
+        public PuzzleCell TileWasRightClicked ( int row, int col )
         {
             if ( PuzzleStatusCheck () )
             {
@@ -129,10 +129,11 @@ namespace MinesPuzzle
                 _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
                 //Fired a delegate to update the suspect cells countdown label.
 
-              //// OR
-              //var puzzleCell = _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
-              //  return puzzleCell;
+                //// OR
+                //var puzzleCell = _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
             }
+            var puzzleCell = PuzzleCellArray [row, col];
+            return puzzleCell;
         }
         #endregion
 

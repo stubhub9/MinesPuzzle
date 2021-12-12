@@ -38,15 +38,16 @@ namespace MinesPuzzle
         ///   Could inherit from Button and add enum Properties
         /// </summary>
         private Button [,] _puzzleGridTiles;
-        public PuzzleLogicB _puzzleLogic;
+        public PuzzleLogic _puzzleLogic;
 
         private int _numberOfMines;
         private int _numberOfRows;
         private Size _gridSize;
 
-        private Brush _boomBrush;
-        private Brush _revealedBrush;
-        private Brush _fogBrush;
+        private Brush _tileBrush_Boom;
+        private Brush _tileBrush_Revealed;
+        private Brush _tileBrush_Suspected;
+        private Brush _tileBrush_Unknown;
         //  End of Private Fields
         #endregion
 
@@ -81,6 +82,7 @@ namespace MinesPuzzle
         //  Event Handlers  *********************************************************************************************************************
         //TODO:  ??Move OnClick to MainWindow??  
         // Reveal a cell, ignore if cell is already revealed or suspected..
+
         private void OnPuzzleButtonClick ( object sender, RoutedEventArgs e )
         {
             // Have PuzzleLogic return a collection of cells for button tags that need to be updated.
@@ -88,37 +90,34 @@ namespace MinesPuzzle
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
             var updatedCells = _puzzleLogic.TileWasSelected ( row, col );
+
             if ( updatedCells.Count == 0 ) return;
+
             else
             {
                 foreach ( var item in updatedCells )
                 {
                     var updatedTile = _puzzleGridTiles [item.Row, item.Col];
                     updatedTile.Tag = item;
-                    //_puzzleGridTiles [item.Row, item.Col].Tag = item;
-                    //:TODO     Add Style triggers to auto update properties;
-                    //      or override Button to add Properties for Tag.Props, and Dependency those;
-                    //      Do it Here, for now. Plus a GameOver would have to be communicated when necessary.
-                    var cellStatus = item.CellStatus;
-                    if ( cellStatus == CellStatus.Boom )
+
+
+                    //var cellStatus = ;
+                    if ( item.CellStatus == CellStatus.Boom )
                     {
-                        updatedTile.Background = _boomBrush;
+                        updatedTile.Content = "bOOm";
+                        updatedTile.Background = _tileBrush_Boom;
                     }
                     else
                     {
-                        updatedTile.Background = _revealedBrush;
+                        updatedTile.Content = item.CellValue.ToString ();
+                        updatedTile.Background = _tileBrush_Revealed;
                     }
-
-                    updatedTile.Content = item.CellValue.ToString ();
-
-
                 }
             }
-
-            //  Trigger animations for reveal, already revealed or suspected.
-
-            //  Update minecount?
+            //  End OnPuzzleButtonClick
         }
+
+
 
         //  Flag or unflag a hidden cell as being presumed as a mine. 
         private void OnPuzzleButtonRightClick ( object sender, RoutedEventArgs e )
@@ -127,12 +126,15 @@ namespace MinesPuzzle
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
             var updatedCell = _puzzleLogic.TileWasRightClicked ( row, col );
-
-            //TODO:  Assuming the tag will trigger a style change!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             b.Tag = updatedCell;
+            b.Background = ( updatedCell.CellStatus == CellStatus.Suspected ) ? _tileBrush_Suspected : _tileBrush_Unknown;
+            b.Content = ( updatedCell.CellStatus == CellStatus.Suspected ) ? "?" : "";
 
-            //TODO:  Need PuzzleLogic to update the suspected tiles countdown label!!!!!!!!!!!!!!!!!!!!!
+
+            //TODO:  Assume MainWindow to register with PuzzleCells. UpdateEvent; for TilesTillClear display.
         }
+
+
 
         private void PuzzleGridLoaded ( object sender, RoutedEventArgs e )
         {
@@ -185,8 +187,9 @@ namespace MinesPuzzle
 
             //  Centralize handling of all clicks in PuzzleGrid.
             AddHandler ( ButtonBase.ClickEvent, new RoutedEventHandler ( OnPuzzleButtonClick ) );
+            AddHandler ( ButtonBase.MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightClick ) );
 
-            _puzzleLogic = new PuzzleLogicB ( numberOfRows, numberOfMines );
+            _puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
 
 
             SetupTheBrushes ();
@@ -206,9 +209,11 @@ namespace MinesPuzzle
             gradStops.Add ( gradStop );
             gradStop = new GradientStop ( Colors.Yellow, .7 );
             gradStops.Add ( gradStop );
-            _boomBrush = new RadialGradientBrush ( gradStops );
-            _revealedBrush = new SolidColorBrush ( Colors.CornflowerBlue );
-            _fogBrush = new SolidColorBrush ( Color.FromRgb ( 60, 80, 170 ) );
+
+            _tileBrush_Boom = new RadialGradientBrush ( gradStops );
+            _tileBrush_Revealed = new SolidColorBrush ( Colors.CornflowerBlue );
+            _tileBrush_Suspected = new SolidColorBrush ( Color.FromRgb ( 70, 90, 180 ) );
+            _tileBrush_Unknown = new SolidColorBrush ( Color.FromRgb ( 60, 80, 170 ) );
         }
 
         //PuzzleLogicInstance = new PuzzleLogic ( numberOfRows, numberOfMines );
@@ -231,10 +236,7 @@ namespace MinesPuzzle
 
             var buttonStyle = (Style)Resources ["PuzzleButtonStyle"];
 
-            //var tags = _puzzleLogic.PuzzleCellArray;
             var puzzleCellArray = _puzzleLogic.PuzzleCellArray;
-            //var tag = new PuzzleCell ();
-            var brush = new SolidColorBrush ( Colors.SlateBlue );
             //  Now add the buttons in.
             for ( var row = 0; row < numberOfRows; row++ )
             {
@@ -246,26 +248,23 @@ namespace MinesPuzzle
                         FontSize = 24,
                         Tag = tag,
                         /*Style = buttonStyle,*/
-                        Background = _fogBrush,
+                        Background = _tileBrush_Unknown,
                         Height = 60,
                         Width = 56,
+                        /*TODO:  Remove troubleshooting. */
                         Content =tag.CellValue.ToString() ,
                     };
 
-
-                    //b.Tag = tags [row, col];
-                    //b.Tag = tag ;
-                    //b.Style = buttonStyle;
                     button.SetValue ( RowProperty, row );
                     button.SetValue ( ColumnProperty, col );
-                    //      SlidePuzzle doesn't specify Children either.
+                    //      SlidePuzzle doesn't specify Children (shared property?) either.
 
                     Children.Add ( button );
                     _puzzleGridTiles [row, col] = button;
                 }
             }
 
-
+            //  End SetupThePuzzleGridStructure method.
         }
         #endregion
 

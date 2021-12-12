@@ -18,7 +18,7 @@
     <Grid.Resources>
         <SolidColorBrush x:Name="HiddenBrush" x:Key="HiddenBrush" Color="Transparent"/>
         <SolidColorBrush x:Name="HiddenTileBrush" x:Key="HiddenTileBrush" Color="SlateBlue"/>
-
+<!--TODO:  Type TileButton :  a Button with extra Properties for Style hooks.-->
         <Style x:Key="PuzzleButtonStyle">
             <Setter Property="Button.Template">
                 <Setter.Value>
