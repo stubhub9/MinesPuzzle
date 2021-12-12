@@ -30,14 +30,15 @@ namespace MinesPuzzle
     {
 
 
-        //  Private Data      ********************************************************************************************************
+        #region  Private Fields
+        //  *****          Private Fields          *****          *****          *****          *****          *****        Private Fields          *****          *****          *****          ******
 
         /// <summary>
         ///   Enables updating (PuzzleGrid) UI buttons based on row and column.
         ///   Could inherit from Button and add enum Properties
         /// </summary>
         private Button [,] _puzzleGridTiles;
-        public PuzzleLogic _puzzleLogic;
+        public PuzzleLogicB _puzzleLogic;
 
         private int _numberOfMines;
         private int _numberOfRows;
@@ -46,8 +47,12 @@ namespace MinesPuzzle
         private Brush _boomBrush;
         private Brush _revealedBrush;
         private Brush _fogBrush;
+        //  End of Private Fields
+        #endregion
 
-        //  Properties     ********************************************************************************************
+
+        #region  Properties
+        //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****          *****
 
         //public int NumberOfRows
         //{ get => _numberOfRows; }
@@ -59,9 +64,11 @@ namespace MinesPuzzle
             set;
         }
 
+        #endregion
 
 
-        //  Events     **********************************************************************************
+        #region  Events
+        //  *****         Events          *****          *****          *****          *****          *****          Events          *****          *****          *****          *****
 
         public event EventHandler SuspectedMinesCountdown_Changed;
 
@@ -131,7 +138,8 @@ namespace MinesPuzzle
         {
 
         }
-
+        //  End of Events &  Methods group
+        #endregion
 
         #region  ?Failed Constructor?
         //  Constructor   ***********************************************************************************************************
@@ -164,7 +172,10 @@ namespace MinesPuzzle
         //}
         #endregion
 
-        //  Constructor      ***************************************************************************************************************************************
+
+
+        #region  Constructor Method Group
+        //  *****          Constructor          *****          *****          *****          *****          *****          Constructor          *****          *****          *****
 
         public PuzzleGrid ( Size gridSize, int numberOfRows, int numberOfMines )
         {
@@ -175,7 +186,7 @@ namespace MinesPuzzle
             //  Centralize handling of all clicks in PuzzleGrid.
             AddHandler ( ButtonBase.ClickEvent, new RoutedEventHandler ( OnPuzzleButtonClick ) );
 
-            _puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
+            _puzzleLogic = new PuzzleLogicB ( numberOfRows, numberOfMines );
 
 
             SetupTheBrushes ();
@@ -256,7 +267,7 @@ namespace MinesPuzzle
 
 
         }
-
+        #endregion
 
 
     }

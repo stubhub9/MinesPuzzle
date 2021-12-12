@@ -3,7 +3,7 @@
   <Class Name="MinesPuzzle.MainWindow">
     <Position X="1.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAIAAAACAAAAQAAAAAIAAAAAAAAAEwAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAIAAAACAAAAQAAIAAIAAAAAAAAAEwAAAAA=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -16,17 +16,18 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="MinesPuzzle.PuzzleLogic" Collapsed="true">
+  <Class Name="MinesPuzzle.PuzzleLogicA" Collapsed="true">
     <Position X="9.25" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgABAAAAABAAAAAAAAEQAgAAAAAAAACAgAACQAAiAAA=</HashCode>
-      <FileName>PuzzleLogic.cs</FileName>
+      <HashCode>AAABAAAAABAAAAAAAAEQAgAIAAAAAACAgAACQAAiAAA=</HashCode>
+      <FileName>PuzzleLogicA.cs</FileName>
+      <NewMemberFileName>PuzzleLogic.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MinesPuzzle.PuzzleCells" Collapsed="true">
     <Position X="9.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AoAAAABAAAAYAAAAAgCEQAAAYAAAACGCAAACAhCAAAA=</HashCode>
+      <HashCode>AEAAAgRAAABRAQAAAAAEAABAAAAAAAACAAEEABAAACA=</HashCode>
       <FileName>PuzzleCells.cs</FileName>
     </TypeIdentifier>
   </Class>
