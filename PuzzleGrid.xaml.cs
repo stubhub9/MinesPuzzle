@@ -254,6 +254,12 @@ namespace MinesPuzzle
                         /*TODO:  Remove troubleshooting. */
                         Content =tag.CellValue.ToString() ,
                     };
+                    //TODO:  Remove TEST
+                    if ( tag.CellValue == CellValue.Mine )
+                    {
+                        button.Background = _tileBrush_Boom;
+
+                    }
 
                     button.SetValue ( RowProperty, row );
                     button.SetValue ( ColumnProperty, col );

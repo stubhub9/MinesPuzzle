@@ -11,11 +11,14 @@
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <Window.Background>
         <LinearGradientBrush 
-            StartPoint="0.0,0" EndPoint="0.8, 1.0">
+            StartPoint="0.5,0" EndPoint="0.5, 1.0">
             <LinearGradientBrush.GradientStops>
-                <GradientStop Offset="0" Color="DeepPink"/>
-                <GradientStop Offset=".5" Color="#FF0000E1"/>
-                <GradientStop Offset="1" Color="#FFE1E000"/>
+                <GradientStop Offset="1" Color="DeepPink"/>
+                <GradientStop Offset=".12" Color="DeepPink"/>
+                <GradientStop Offset=".119" Color="#FFAAAA20"/>
+                <GradientStop Offset=".05" Color="#FFAAAA20"/>
+                <!--<GradientStop Offset="0" Color="#FFE1E000"/>-->
+                <GradientStop Offset=".03" Color="#FF0000E1"/>
             </LinearGradientBrush.GradientStops>
         </LinearGradientBrush>
     </Window.Background>
@@ -64,9 +67,9 @@
                 <Label
                     HorizontalAlignment="Center"
                     >Mine Count</Label>
-                <Button x:Name="MineCountDisplay"
+                <Button x:Name="mineCountDisplay"
                         Background="#FF0000FF" >
-                    <Label
+                    <Label x:Name="mineCountDisplay_Label"
                         Foreground="#FF9FAAFF">
                         000
                     </Label></Button>
@@ -85,6 +88,7 @@
                 Grid.Column="4" Grid.Row="1" Margin="0,0,10,0" >
                 <Label HorizontalAlignment="Center"
                     >Timer</Label>
+                
                 <Button x:Name="timerDisplay"
                         Background="#FFFF5050" >
                     <Label

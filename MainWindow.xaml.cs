@@ -44,6 +44,9 @@ namespace MinesPuzzle
 //Need to play with this>>>>>>>>>>>>>>>>>>>>>>>>>>>
             //this.SizeToContent = SizeToContent.WidthAndHeight;
             NewPuzzleGrid ();
+            //_puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateTilesTillClear += UpdateMinesDisplay;
+            //_puzzleGrid._puzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
+
         }
 
 
@@ -68,7 +71,10 @@ namespace MinesPuzzle
             if ( _puzzleGrid != null )
             {
                 PuzzleHostingPanel.Children.Remove ( _puzzleGrid );
+                //TODO:  I need to do this?
+                //_puzzleGrid._puzzleLogic.UpdateTimeDisplay -= UpdateTimeDisplay;
             }
+
 
             _puzzleGrid = new PuzzleGrid ( _puzzleSize, _numberOfRows, _numberOfMines )
             {
@@ -79,19 +85,23 @@ namespace MinesPuzzle
             PuzzleHostingPanel.Children.Add ( _puzzleGrid );
             _puzzleGrid.Height = 600;
             _puzzleGrid.Width = 600;
-
-            //  
+            _puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateTilesTillClear += UpdateMinesDisplay;
             _puzzleGrid._puzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
+            
         }
 
 
 
         private void UpdateTimeDisplay ( string elapsedTime )
         {
+            //  Button content is passed to the label.
             timerDisplay.Content = elapsedTime;
         }
 
-
+        private void UpdateMinesDisplay ( string hiddenTiles, PuzzleCell cell )
+        {
+            mineCountDisplay_Label.Content = hiddenTiles;
+        }
 
 
     }

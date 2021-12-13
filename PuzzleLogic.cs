@@ -47,6 +47,8 @@ namespace MinesPuzzle
         public PuzzleCell [,] PuzzleCellArray
         { get => _puzzleCells.PuzzleCellArray; }
 
+        public PuzzleCells ThePuzzleCells
+        { get => _puzzleCells; }
 
         //Do I need this for visuals or error checking? Game is won or lost; true?
         //public bool IsGameOver
@@ -169,7 +171,7 @@ namespace MinesPuzzle
         private bool PuzzleStatusCheck ()
         {
             var proceed = false;
-            if ( ( _puzzleStatus != PuzzleStatus.GameVictory ) || ( _puzzleStatus != PuzzleStatus.GameDefeat ) )
+            if ( !(( _puzzleStatus == PuzzleStatus.GameVictory ) || ( _puzzleStatus == PuzzleStatus.GameDefeat )) )
             {
                 proceed = true;
 
