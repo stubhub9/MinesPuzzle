@@ -41,7 +41,7 @@ namespace MinesPuzzle
         public MainWindow ()
         {
             InitializeComponent ();
-//Need to play with this>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//TODO:  Need to play with this>>>>>>>>>>>>>>>>>>>>>>>>>>>
             //this.SizeToContent = SizeToContent.WidthAndHeight;
             NewPuzzleGrid ();
             //_puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateTilesTillClear += UpdateMinesDisplay;
@@ -67,7 +67,6 @@ namespace MinesPuzzle
         //  On new game.
         private void NewPuzzleGrid ()
         {
-//TODO:  Error? What if _puzzleGrid isn't in PuzzleHostingPanel????????????????????????????????????????????????????????????
             if ( _puzzleGrid != null )
             {
                 PuzzleHostingPanel.Children.Remove ( _puzzleGrid );
@@ -85,9 +84,11 @@ namespace MinesPuzzle
             PuzzleHostingPanel.Children.Add ( _puzzleGrid );
             _puzzleGrid.Height = 600;
             _puzzleGrid.Width = 600;
-            _puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateTilesTillClear += UpdateMinesDisplay;
+
+
+            _puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateGrid += UpdateMinesDisplay;
             _puzzleGrid._puzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
-            
+            _puzzleGrid._puzzleLogic.Ready ();
         }
 
 
@@ -98,9 +99,10 @@ namespace MinesPuzzle
             timerDisplay.Content = elapsedTime;
         }
 
-        private void UpdateMinesDisplay ( string hiddenTiles, PuzzleCell cell )
+        //private void UpdateMinesDisplay ( string hiddenTiles, PuzzleCell cell )
+        private void UpdateMinesDisplay ( object sender, PuzzleCellsEventArgs e )
         {
-            mineCountDisplay_Label.Content = hiddenTiles;
+            mineCountDisplay_Label.Content = e.Mines.ToString () ;
         }
 
 

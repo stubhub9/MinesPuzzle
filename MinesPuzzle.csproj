@@ -59,6 +59,8 @@
     <Compile Include="CellValue.cs" />
     <Compile Include="PuzzleCell.cs" />
     <Compile Include="PuzzleCells.cs" />
+    <Compile Include="PuzzleCellsEventArgs.cs" />
+    <Compile Include="PuzzleColors.cs" />
     <Compile Include="PuzzleGrid.xaml.cs">
       <DependentUpon>PuzzleGrid.xaml</DependentUpon>
     </Compile>

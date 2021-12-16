@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Media.Animation;
 
+
 namespace MinesPuzzle
 {
     /// <summary>
@@ -40,14 +41,15 @@ namespace MinesPuzzle
         private Button [,] _puzzleGridTiles;
         public PuzzleLogic _puzzleLogic;
 
-        private int _numberOfMines;
-        private int _numberOfRows;
-        private Size _gridSize;
+        //private int _numberOfMines;
+        //private int _numberOfRows;
+        //private Size _gridSize;
 
-        private Brush _tileBrush_Boom;
-        private Brush _tileBrush_Revealed;
-        private Brush _tileBrush_Suspected;
-        private Brush _tileBrush_Unknown;
+        ////private Brush _tileBrush_Boom;
+        ////private Brush _tileBrush_Revealed;
+        ////private Brush _tileBrush_Suspected;
+        ////private Brush _tileBrush_Unknown;
+        ////private Brush _tileBrush_Safed;
         //  End of Private Fields
         #endregion
 
@@ -85,13 +87,13 @@ namespace MinesPuzzle
 
         private void OnPuzzleButtonClick ( object sender, RoutedEventArgs e )
         {
-            // Have PuzzleLogic return a collection of cells for button tags that need to be updated.
             var b = e.Source as Button;
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
             var updatedCells = _puzzleLogic.TileWasSelected ( row, col );
 
             if ( updatedCells.Count == 0 ) return;
+
 
             else
             {
@@ -100,21 +102,56 @@ namespace MinesPuzzle
                     var updatedTile = _puzzleGridTiles [item.Row, item.Col];
                     updatedTile.Tag = item;
 
-
-                    //var cellStatus = ;
-                    if ( item.CellStatus == CellStatus.Boom )
+                    if ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameDefeat )
                     {
-                        updatedTile.Content = "bOOm";
-                        updatedTile.Background = _tileBrush_Boom;
+                        //  This should be the mine; followed by the mine list.
+                        if ( item.CellStatus == CellStatus.Boom )
+                        {
+                            updatedTile.Content = "";
+                            updatedTile.Background = PuzzleColors.TileBrush_Boom;
+                        }
+                        else
+                        if ( item.CellStatus == CellStatus.Suspected )
+                        {
+                            updatedTile.Content = "";
+                            updatedTile.Background = PuzzleColors.TileBrush_Safed;
+
+                        }
+                        else
+                        {
+                            updatedTile.Content = "*";
+                            updatedTile.Background = PuzzleColors.TileBrush_Mined;
+                            ////UpdateTiles_IsVictory ( false );
+                        }
                     }
+                    //  End of Defeat branch.
+
+                    //else if ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory )
+                    //{
+
+                    //}
                     else
                     {
-                        updatedTile.Content = item.CellValue.ToString ();
-                        updatedTile.Background = _tileBrush_Revealed;
+                        updatedTile.Content = ((int)item.CellValue).ToString ();
+                        updatedTile.Background = PuzzleColors.TileBrush_Revealed;
+                        //updatedTile.Background = _tileBrush_Revealed;
                     }
                 }
             }
+            if ( (_puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory) || (_puzzleLogic.PuzzleStatus == PuzzleStatus.GameDefeat ))
+            {  UpdateTiles_IsVictory ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory );  }
             //  End OnPuzzleButtonClick
+        }
+
+        private void UpdateTiles_IsVictory ( bool isVictory )
+        {
+            foreach ( var button in _puzzleGridTiles )
+            {
+                if ( button.Background == PuzzleColors.TileBrush_Unknown )
+                {
+                    button.Background = ( isVictory ) ? PuzzleColors.TileBrush_Victory  : PuzzleColors.TileBrush_Defeat;
+                }
+            }
         }
 
 
@@ -122,16 +159,19 @@ namespace MinesPuzzle
         //  Flag or unflag a hidden cell as being presumed as a mine. 
         private void OnPuzzleButtonRightClick ( object sender, RoutedEventArgs e )
         {
-            var b = e.Source as Button;
-            var row = (int)b.GetValue ( RowProperty );
-            var col = (int)b.GetValue ( ColumnProperty );
+            var button = e.Source as Button;
+            var row = (int)button.GetValue ( RowProperty );
+            var col = (int)button.GetValue ( ColumnProperty );
             var updatedCell = _puzzleLogic.TileWasRightClicked ( row, col );
-            b.Tag = updatedCell;
-            b.Background = ( updatedCell.CellStatus == CellStatus.Suspected ) ? _tileBrush_Suspected : _tileBrush_Unknown;
-            b.Content = ( updatedCell.CellStatus == CellStatus.Suspected ) ? "?" : "";
+            button.Tag = updatedCell;
 
+            if ( updatedCell.CellStatus == CellStatus.Suspected )
+            {  button.Background = PuzzleColors.TileBrush_Suspected;     }
+            else
+            { button.Background = PuzzleColors.TileBrush_Unknown; }
 
-            //TODO:  Assume MainWindow to register with PuzzleCells. UpdateEvent; for TilesTillClear display.
+            //b.Background = ( updatedCell.CellStatus == CellStatus.Suspected ) ? PuzzleColors.TileBrush_Suspected : PuzzleColors.TileBrush_Unknown;
+            button.Content = ( updatedCell.CellStatus == CellStatus.Suspected ) ? "?" : "";
         }
 
 
@@ -192,33 +232,12 @@ namespace MinesPuzzle
             _puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
 
 
-            SetupTheBrushes ();
             SetupThePuzzleGridStructure ( numberOfRows );
         }
 
 
 
-        private void SetupTheBrushes ()
-        {
-            var gradStops = new GradientStopCollection ();
-            var gradStop = new GradientStop ( Colors.Red, 1.0 );
-            gradStops.Add ( gradStop );
-            gradStop = new GradientStop ( Colors.Yellow, .9 );
-            gradStops.Add ( gradStop );
-            gradStop = new GradientStop ( Colors.Red, .8 );
-            gradStops.Add ( gradStop );
-            gradStop = new GradientStop ( Colors.Yellow, .7 );
-            gradStops.Add ( gradStop );
 
-            _tileBrush_Boom = new RadialGradientBrush ( gradStops );
-            _tileBrush_Revealed = new SolidColorBrush ( Colors.CornflowerBlue );
-            _tileBrush_Suspected = new SolidColorBrush ( Color.FromRgb ( 70, 90, 180 ) );
-            _tileBrush_Unknown = new SolidColorBrush ( Color.FromRgb ( 60, 80, 170 ) );
-        }
-
-        //PuzzleLogicInstance = new PuzzleLogic ( numberOfRows, numberOfMines );
-        ////_puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
-        //SetupThePuzzleGridStructure ( numberOfRows );
 
         private void SetupThePuzzleGridStructure ( int numberOfRows )
         {
@@ -248,17 +267,18 @@ namespace MinesPuzzle
                         FontSize = 24,
                         Tag = tag,
                         /*Style = buttonStyle,*/
-                        Background = _tileBrush_Unknown,
-                        Height = 60,
-                        Width = 56,
+                        Background = PuzzleColors.TileBrush_Unknown,
+                        Height = 30,
+                        Width = 30,
                         /*TODO:  Remove troubleshooting. */
-                        Content =tag.CellValue.ToString() ,
+                        Content = ((int) tag.CellValue).ToString (),
+                        Margin = new Thickness ( 1,1,1,1 ),
                     };
                     //TODO:  Remove TEST
                     if ( tag.CellValue == CellValue.Mine )
                     {
-                        button.Background = _tileBrush_Boom;
-
+                        button.Background = PuzzleColors.TileBrush_Boom;
+                        button.Content = "";
                     }
 
                     button.SetValue ( RowProperty, row );

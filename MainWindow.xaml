@@ -6,19 +6,19 @@
         xmlns:local="clr-namespace:MinesPuzzle"
         mc:Ignorable="d"
         Title="Minesweeper" 
-        Height="780" Width="598"
+        Height="450" Width="350"
         FontFamily ="Arial Black"
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <Window.Background>
         <LinearGradientBrush 
             StartPoint="0.5,0" EndPoint="0.5, 1.0">
             <LinearGradientBrush.GradientStops>
-                <GradientStop Offset="1" Color="DeepPink"/>
-                <GradientStop Offset=".12" Color="DeepPink"/>
-                <GradientStop Offset=".119" Color="#FFAAAA20"/>
-                <GradientStop Offset=".05" Color="#FFAAAA20"/>
                 <!--<GradientStop Offset="0" Color="#FFE1E000"/>-->
-                <GradientStop Offset=".03" Color="#FF0000E1"/>
+                <GradientStop Offset=".06" Color="#FF0000E1"/>
+                <GradientStop Offset=".07" Color="#FFAAAA20"/>
+                <GradientStop Offset=".189" Color="#FFAAAA20"/>
+                <GradientStop Offset=".19" Color="#FFDD9000"/>
+                <!--<GradientStop Offset="1" Color="DeepPink"/>-->
             </LinearGradientBrush.GradientStops>
         </LinearGradientBrush>
     </Window.Background>
@@ -37,8 +37,9 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="8*"/>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height=".25*"/>
+            <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
 
         <Grid x:Name="TopHeader" 

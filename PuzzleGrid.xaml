@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              Background="Transparent"
              Loaded="PuzzleGridLoaded"
-            Grid.Column="1" Grid.Row="1"
+            Grid.Column="1" Grid.Row="2"
             >
 
     <!--xmlns:local="clr-namespace:MinesPuzzle"-->

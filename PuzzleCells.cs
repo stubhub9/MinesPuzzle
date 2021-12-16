@@ -9,21 +9,25 @@ namespace MinesPuzzle
     public class PuzzleCells
     {
         #region  Events group
-        //  Delegate for PuzzleCells 
+        public event EventHandler<PuzzleCellsEventArgs> UpdateGrid;
 
-        /*  Respond to right clicking a tile, or selecting a mine, by updating the tile and the TileToClear Display.    
-         *  
-         TODO:  ?Add win/ loss events?;  and eliminate the returns?*/
-        public delegate void UpdateHandler ( string updateString, PuzzleCell updatedCell );
-        public event UpdateHandler UpdateTilesTillClear;
-
-        public delegate void PuzzleCellsHandler ( List<PuzzleCell> updatedCells );
-        public event PuzzleCellsHandler PuzzleCellsReturn;
+        //protected virtual void OnPuzzleArrayChanged ( PuzzleEventArgs e )
+        protected virtual void OnPuzzleArrayChanged ( int mines, List<PuzzleCell> cells )
+        {
+            var e = new PuzzleCellsEventArgs ()
+            {
+                Cells = cells,
+                Mines = mines.ToString (),
+            };
+            //  object  sender, Args  e
+            UpdateGrid?.Invoke ( this, e );
+        }
+        //  End events group.
         #endregion
 
 
         #region  Private Fields
-        //  *****          Private Fields          *****          *****          *****          *****          *****          *****          *****          *****          *****          *****
+        //  *****          Private Fields          *****          *****          *****          *****          *****          *****          Private Fields          *****           *****
         //private int _hiddenCellsCount;
         private int _hiddenSafeCellsCount;
         private bool _haveBoom;
@@ -62,7 +66,8 @@ namespace MinesPuzzle
             Constructor_InitializeArray ( rows );
             Constructor_SetMines ( rows, mines );
 
-            UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [0, 0] );
+
+            //UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [0, 0] );
         }
 
         private void Constructor_InitializeVars ( int rows, int mines )
@@ -121,7 +126,19 @@ namespace MinesPuzzle
         #region Public Methods
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
 
-        #region  UpdatedCells Public Method Group
+
+        /// <summary>
+        /// Updates UI counters for the new game; after handlers have been registered; .
+        /// </summary>
+        public void Ready ()
+        {
+            var _ = new List<PuzzleCell> ();
+            OnPuzzleArrayChanged ( _minesToClear, _ );
+        }
+
+
+
+        #region  UpdateCells Public Method Group
         //public (List<PuzzleCell> UpdatedCells, bool HaveBoom) UpdateSelectedCell ( int row, int col )
         public List<PuzzleCell> UpdateSelectedCell ( int row, int col )
         {
@@ -154,11 +171,12 @@ namespace MinesPuzzle
 
                         break;
 
+
                 }
             }
             ////  Return a Tuple.
             //return (updatedCells, _haveBoom);
-
+            OnPuzzleArrayChanged ( _minesToClear, updatedCells );
             return updatedCells;
         }
 
@@ -176,26 +194,22 @@ namespace MinesPuzzle
                 { iRemove = i; }
 
                 //  Take note of mines that were correctly indentified.
-                if ( _puzzleCellArray [ mineCell.Row, mineCell.Col ].CellStatus == CellStatus.Suspected )
+                if ( _puzzleCellArray [mineCell.Row, mineCell.Col].CellStatus == CellStatus.Suspected )
                 { m++; }
 
-                mineCell.CellStatus = CellStatus.Revealed;
-                _mineCellsList [i] = mineCell;
-
+                else
+                {
+                    mineCell.CellStatus = CellStatus.Revealed;
+                    _mineCellsList [i] = mineCell;
+                }
                 //TODO:  Currenty don't need to update the array; maybe with Dep Prop.
                 //_puzzleCellArray [mineCell.Row, mineCell.Col] = mineCell;
             }
 
             _minesToClear = m - _mineCellsList.Count ();
-            //_hiddenCellsCount = m - _mineCellsList.Count ();
             /*  Update the display with a negative number for mines unidentified; 
              *  and revealing the chosen cell as a mine. */
-            UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _mineCellsList [iRemove] );
-            //UpdateTilesTillClear?.Invoke ( _hiddenCellsCount.ToString (), _mineCellsList [iRemove] );
             _mineCellsList.RemoveAt ( iRemove );
-
-            //_puzzleCellArray [selectedCell.Row, selectedCell.Col].CellStatus = CellStatus.Boom;
-
         }
 
         #endregion
@@ -226,12 +240,15 @@ namespace MinesPuzzle
             }
             //  Update the MainWindow display and the right clicked tile; with an event.
             //UpdateTilesTillClear?.Invoke ( _hiddenCellsCount.ToString (), _puzzleCellArray [row, col] );
-            UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [row, col] );
+            //UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [row, col] );
             //  Returns an updated cell for the button's tag.
             //var updatedCells = new List<PuzzleCell> ();
             //updatedCells.Add ( _puzzleCellArray [row, col] );
             //return updatedCells;
             selectedCell = _puzzleCellArray [row, col];
+            var updatedCells = new List<PuzzleCell> ();
+            updatedCells.Add ( selectedCell );
+            OnPuzzleArrayChanged ( _minesToClear, updatedCells );
             return selectedCell;
         }
         #endregion //  Public Methods

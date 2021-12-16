@@ -14,6 +14,11 @@ namespace MinesPuzzle
     public class PuzzleLogic //: INotifyPropertyChanged
     {
         #region Events
+
+        public delegate void PuzzleStatusHandler ( PuzzleStatus gameStatus );
+        public event PuzzleStatusHandler UpdateGameStyle;
+
+
         public delegate void TimerDisplayHandler ( string time );
         public event TimerDisplayHandler UpdateTimeDisplay;
         #endregion
@@ -26,9 +31,6 @@ namespace MinesPuzzle
         private int _elapsedTime;
         private PuzzleStatus _puzzleStatus;
 
-        //private bool _isGameOver;
-        //private bool _isGamePaused;
-
         #endregion
 
 
@@ -38,10 +40,8 @@ namespace MinesPuzzle
         public int ElapsedTime
         { get => _elapsedTime; }
 
-
         public PuzzleStatus PuzzleStatus
         { get => _puzzleStatus; }
-
 
         //  Provides the tags for the PuzzleGrid buttons.
         public PuzzleCell [,] PuzzleCellArray
@@ -50,14 +50,6 @@ namespace MinesPuzzle
         public PuzzleCells ThePuzzleCells
         { get => _puzzleCells; }
 
-        //Do I need this for visuals or error checking? Game is won or lost; true?
-        //public bool IsGameOver
-        //{
-        //    get => _isGameOver;
-        //}
-
-        //public bool IsGamePaused
-        //{ get => _isGamePaused; }
         #endregion
 
         #region  Constructor Method Group
@@ -97,6 +89,17 @@ namespace MinesPuzzle
 
         #region  Public Methods
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
+
+        public void Ready ()
+        {
+            _puzzleCells.Ready ();
+            UpdateGameStyle?.Invoke ( _puzzleStatus );
+            UpdateTimeDisplay?.Invoke ( _elapsedTime.ToString () );
+        }
+
+
+
+
         
         public List<PuzzleCell> TileWasSelected ( int row, int col )
         {
@@ -140,7 +143,7 @@ namespace MinesPuzzle
         #endregion
 
 
-        #region  Public Methods
+        #region  Private   Methods
         //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****      
 
 
