@@ -90,10 +90,11 @@ namespace MinesPuzzle
             var b = e.Source as Button;
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
+
             var updatedCells = _puzzleLogic.TileWasSelected ( row, col );
 
-            if ( updatedCells.Count == 0 ) return;
-
+            if ( updatedCells.Count == 0 )
+                return;
 
             else
             {
@@ -113,7 +114,7 @@ namespace MinesPuzzle
                         else
                         if ( item.CellStatus == CellStatus.Suspected )
                         {
-                            updatedTile.Content = "";
+                            updatedTile.Content = "?";
                             updatedTile.Background = PuzzleColors.TileBrush_Safed;
 
                         }
@@ -132,14 +133,14 @@ namespace MinesPuzzle
                     //}
                     else
                     {
-                        updatedTile.Content = ((int)item.CellValue).ToString ();
+                        updatedTile.Content = ( (int)item.CellValue ).ToString ();
                         updatedTile.Background = PuzzleColors.TileBrush_Revealed;
                         //updatedTile.Background = _tileBrush_Revealed;
                     }
                 }
             }
-            if ( (_puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory) || (_puzzleLogic.PuzzleStatus == PuzzleStatus.GameDefeat ))
-            {  UpdateTiles_IsVictory ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory );  }
+            if ( ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory ) || ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameDefeat ) )
+            { UpdateTiles_IsVictory ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory ); }
             //  End OnPuzzleButtonClick
         }
 
@@ -147,9 +148,22 @@ namespace MinesPuzzle
         {
             foreach ( var button in _puzzleGridTiles )
             {
-                if ( button.Background == PuzzleColors.TileBrush_Unknown )
+                if ( isVictory )
                 {
-                    button.Background = ( isVictory ) ? PuzzleColors.TileBrush_Victory  : PuzzleColors.TileBrush_Defeat;
+                    var tag = (PuzzleCell)button.Tag;
+                    if ( tag.CellValue == CellValue.Mine )
+                    {   button.Background = PuzzleColors.TileBrush_Safed;  }
+
+                    else
+                    { button.Background = PuzzleColors.TileBrush_Victory; }
+                }
+
+                else
+                {
+                    if ( button.Background == PuzzleColors.TileBrush_Unknown )
+                    {
+                        button.Background = PuzzleColors.TileBrush_Defeat;
+                    }
                 }
             }
         }
@@ -166,7 +180,7 @@ namespace MinesPuzzle
             button.Tag = updatedCell;
 
             if ( updatedCell.CellStatus == CellStatus.Suspected )
-            {  button.Background = PuzzleColors.TileBrush_Suspected;     }
+            { button.Background = PuzzleColors.TileBrush_Suspected; }
             else
             { button.Background = PuzzleColors.TileBrush_Unknown; }
 
@@ -271,15 +285,15 @@ namespace MinesPuzzle
                         Height = 30,
                         Width = 30,
                         /*TODO:  Remove troubleshooting. */
-                        Content = ((int) tag.CellValue).ToString (),
-                        Margin = new Thickness ( 1,1,1,1 ),
+                        //Content = ((int) tag.CellValue).ToString (),
+                        Margin = new Thickness ( 1, 1, 1, 1 ),
                     };
-                    //TODO:  Remove TEST
-                    if ( tag.CellValue == CellValue.Mine )
-                    {
-                        button.Background = PuzzleColors.TileBrush_Boom;
-                        button.Content = "";
-                    }
+                    //////TODO:  Remove TEST
+                    ////if ( tag.CellValue == CellValue.Mine )
+                    ////{
+                    ////    button.Background = PuzzleColors.TileBrush_Boom;
+                    ////    button.Content = "";
+                    ////}
 
                     button.SetValue ( RowProperty, row );
                     button.SetValue ( ColumnProperty, col );

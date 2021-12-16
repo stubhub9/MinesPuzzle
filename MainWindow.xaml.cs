@@ -33,7 +33,7 @@ namespace MinesPuzzle
         // Used to set Puzzle: Grid, Logic and Cells
         private Size _puzzleSize = new Size ( 500.0, 500.0 );
         private int _numberOfRows = 10;
-        private int _numberOfMines = 15;
+        private int _numberOfMines = 25;
 
 
 

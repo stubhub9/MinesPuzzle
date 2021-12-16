@@ -46,8 +46,8 @@ namespace MinesPuzzle
         static public RadialGradientBrush TileBrush_Suspected
         { get => _tileBrush_Suspected; }
 
-        static public LinearGradientBrush TileBrush_Mined
-        { get => _tileBrush_Safed; }
+        static public RadialGradientBrush TileBrush_Mined
+        { get => _tileBrush_Suspected; }
 
         static public LinearGradientBrush TileBrush_Safed
         { get => _tileBrush_Safed; }
@@ -104,17 +104,17 @@ namespace MinesPuzzle
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .72 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .62 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .64 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 255, 225, 70 ), .6 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .58 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .56 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .42 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .44 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 255, 225, 70 ), .4 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .38 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .36);
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .22 );
             gradStops_Safed.Add ( gradStop );
