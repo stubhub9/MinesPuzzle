@@ -17,7 +17,9 @@
                 <GradientStop Offset=".06" Color="#FF0000E1"/>
                 <GradientStop Offset=".07" Color="#FFAAAA20"/>
                 <GradientStop Offset=".189" Color="#FFAAAA20"/>
-                <GradientStop Offset=".19" Color="#FFDD9000"/>
+                <GradientStop Offset=".189" Color="#FF000000"/>
+                <!--<GradientStop Offset=".189" Color="#FFAAAA20"/>-->
+                <!--<GradientStop Offset=".19" Color="#FFFFB64B"/>-->
                 <!--<GradientStop Offset="1" Color="DeepPink"/>-->
             </LinearGradientBrush.GradientStops>
         </LinearGradientBrush>

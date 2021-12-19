@@ -8,7 +8,7 @@ namespace MinesPuzzle
 {
 //TODO:  ? Add user options for GamePaused ?
     //      GamePaused should be triggered by window minimized, lost focus (?user option?)
-    public enum PuzzleStatus
+    enum PuzzleStatus
     {
         GameDefeat = -1,
         GamePaused,

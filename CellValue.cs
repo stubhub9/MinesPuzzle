@@ -10,7 +10,7 @@ namespace MinesPuzzle
     ///  Provides an enum value for a PuzzleCell stuct property.
     ///  Values from -1 (is a mine) to 8 (number of mines adjacent).
     /// </summary>
-    public enum CellValue
+    enum CellValue
     {
         //  Number of mines adjacent to cell;
         //  or if mine.

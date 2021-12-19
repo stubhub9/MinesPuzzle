@@ -31,7 +31,7 @@ namespace MinesPuzzle
         #region  Properties
         //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****        
 
-        static public Color Color_Defeat
+        static internal Color Color_Defeat
         { get => _color_Defeat; }
 
         static public Color Color_Unknown
@@ -100,25 +100,33 @@ namespace MinesPuzzle
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .82 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 255, 225, 70 ), .8 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .819 );
+            gradStops_Safed.Add ( gradStop );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .721 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .72 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .64 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .60 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 255, 225, 70 ), .6 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .599 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .56 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .541 );
+            gradStops_Safed.Add ( gradStop );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .54 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .44 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 255, 225, 70 ), .4 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .439 );
+            gradStops_Safed.Add ( gradStop );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .361 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .36);
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .22 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 255, 225, 70 ), .2 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .219 );
+            gradStops_Safed.Add ( gradStop );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .181 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .18 );
             gradStops_Safed.Add ( gradStop );
@@ -127,16 +135,10 @@ namespace MinesPuzzle
             //  End of GradStops
             #endregion
 
-            //var _color_Unknown = Color.FromRgb ( 60, 80, 170 );
-            //var _color_Defeat = Color.FromRgb ( 180, 80, 40 );
-            //var _color_Victory = Color.FromRgb ( 120, 140, 210 );
-
 
             _tileBrush_Safed = new LinearGradientBrush ( gradStops_Safed );
             _tileBrush_Boom = new RadialGradientBrush ( gradStops_Boom );
             _tileBrush_Suspected = new RadialGradientBrush ( gradStops_Suspected );
-            //_tileBrush_Revealed = new SolidColorBrush ( Colors.CornflowerBlue );
-            //_tileBrush_Unknown = new SolidColorBrush ( Color.FromRgb ( 60, 80, 170 ) );
 
         }
         //  End of Static Constructor
