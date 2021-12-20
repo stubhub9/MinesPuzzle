@@ -100,21 +100,9 @@ namespace MinesPuzzle
         
         public void TileWasSelected ( int row, int col )
         {
-
             if ( PuzzleStatusCheck () )
             {
                 _puzzleCells.UpdateSelectedCell ( row, col );
-
-
-                ////  Checking for state changes.
-                //if ( _puzzleCells.AllCellsRevealed )
-                //{
-                //    _puzzleStatus = PuzzleStatus.GameVictory;
-                //}
-                //else if ( _puzzleCells.MineWasRevealed )
-                //{
-                //    _puzzleStatus = PuzzleStatus.GameDefeat;
-                //}
             }
         }
 
