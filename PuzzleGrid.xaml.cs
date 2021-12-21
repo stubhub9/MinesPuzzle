@@ -80,18 +80,17 @@ namespace MinesPuzzle
 
 
         //  Flag or unflag a hidden cell as being presumed as a mine. 
-        private void OnPuzzleButtonRightClick ( object sender, RoutedEventArgs e )
+        private void OnPuzzleButtonRightMouseDown ( object sender, RoutedEventArgs e )
         {
-            var button = e.Source as Button;
+            Button button = e.Source as Button;
 
-            //  Mouse right button down, was targeting non-button elements.
+            //  Mouse right button down, was targeting non-button elements; re grid through margins..
             if ( button is null )
             { return; }
 
             var row = (int)button.GetValue ( RowProperty );
             var col = (int)button.GetValue ( ColumnProperty );
             _puzzleLogic.TileWasRightClicked ( row, col );
-
         }
 
 
@@ -116,7 +115,7 @@ namespace MinesPuzzle
 
             //  Centralize handling of all clicks in PuzzleGrid.
             AddHandler ( ButtonBase.ClickEvent, new RoutedEventHandler ( OnPuzzleButtonClick ) );
-            AddHandler ( ButtonBase.MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightClick ) );
+            AddHandler ( ButtonBase.MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightMouseDown ) );
 
             _puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
             _puzzleLogic.ThePuzzleCells.UpdateGrid += UpdateTiles;
@@ -182,7 +181,7 @@ namespace MinesPuzzle
         #region  Private   Methods
         //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****    
 
-
+        #region  UpdateTiles  Method Group
         void UpdateTiles ( object sender, PuzzleCellsEventArgs e )
         {
             var cells = e.Cells;
@@ -199,38 +198,6 @@ namespace MinesPuzzle
 
 
         void UpdateTiles_Cells ( PuzzleCellsEventArgs e )
-        {
-            foreach ( var cell in e.Cells )
-            {
-                var tile = _puzzleGridTiles [cell.Row, cell.Col];
-                tile.Tag = cell;
-
-                if ( _puzzleLogic.GameStatus == PuzzleStatus.GameDefeat )
-                { UpdateTiles_Boom ( tile, cell ); }
-
-                else if ( cell.CellStatus == CellStatus.Suspected )
-                {
-                    tile.Background = PuzzleColors.TileBrush_Suspected;
-                    tile.Content = "?";
-                }
-
-                else if ( cell.CellStatus == CellStatus.Hidden )
-                {
-                    tile.Background = PuzzleColors.TileBrush_Unknown;
-                    tile.Content = "";
-                }
-
-                else
-                {
-                    tile.Content = ( (int)cell.CellValue ).ToString ();
-                    tile.Background = PuzzleColors.TileBrush_Revealed;
-                }
-                //  End of foreach.
-            }
-        }
-        
-        
-        void UpdateTiles_CellsA ( PuzzleCellsEventArgs e )
         {
             foreach ( var cell in e.Cells )
             {
@@ -290,7 +257,6 @@ namespace MinesPuzzle
         }
 
 
-
         private void UpdateTiles_IsVictory ( bool isVictory )
         {
             foreach ( var button in _puzzleGridTiles )
@@ -324,7 +290,7 @@ namespace MinesPuzzle
                 }
             }
         }
-
+        #endregion
 
         #endregion
 

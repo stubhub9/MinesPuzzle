@@ -20,15 +20,9 @@ namespace MinesPuzzle
                 AllCellsRevealed = LastCellRevealed,
                 HasBoom = MineWasRevealed,
             };
-            //  object  sender, Args  e
+            //  object  sender, EventArgs  e
             UpdateGrid?.Invoke ( this, e );
         }
-
-
-
-        public delegate void GameOverHandler ( PuzzleStatus puzzleStatus );
-        public event GameOverHandler GameIsFinished;
-
 
 
         //  End events group.
@@ -37,7 +31,6 @@ namespace MinesPuzzle
 
         #region  Private Fields
         //  *****          Private Fields          *****          *****          *****          *****          *****          *****          Private Fields          *****           *****
-        //private int _hiddenCellsCount;
         private int _hiddenSafeCellsCount;
         private bool _haveBoom;
         private int _minesToClear;
@@ -74,19 +67,15 @@ namespace MinesPuzzle
             Constructor_InitializeVars ( rows, mines );
             Constructor_InitializeArray ( rows );
             Constructor_SetMines ( rows, mines );
-
-
-            //UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [0, 0] );
         }
 
         private void Constructor_InitializeVars ( int rows, int mines )
         {
             _haveBoom = false;
             _hiddenSafeCellsCount = ( rows * rows ) - mines;
-            //_hiddenCellsCount = ( rows * rows );
             _minesToClear = mines;
 
-            // Just to suppress a message.
+            // Just to suppress an Error List  info Message.
             _mineCellsList = new List<PuzzleCell> ();
         }
 
@@ -163,7 +152,6 @@ namespace MinesPuzzle
                     case CellValue.Mine:
                         UpdateSelectedCell_Mined ( selectedCell );
                         _haveBoom = true;
-                        GameIsFinished?.Invoke ( PuzzleStatus.GameDefeat );
                         selectedCell.CellStatus = CellStatus.Boom;
                         updatedCells.Add ( selectedCell );
                         updatedCells.AddRange ( _mineCellsList );
@@ -172,9 +160,9 @@ namespace MinesPuzzle
 
                     default:
                         _hiddenSafeCellsCount--;
-                        if ( _hiddenSafeCellsCount ==0 )
-                        { GameIsFinished?.Invoke ( PuzzleStatus.GameVictory );  }
-                        //_hiddenCellsCount--;
+                        if ( LastCellRevealed )
+                        { _minesToClear = 0;   }
+
                         selectedCell.CellStatus = CellStatus.Revealed;
                         _puzzleCellArray [row, col] = selectedCell;
                         updatedCells.Add ( selectedCell );
@@ -302,7 +290,6 @@ namespace MinesPuzzle
                                 _puzzleCellArray [r, c].CellStatus = CellStatus.Revealed;
                                 returnCellList.Add ( _puzzleCellArray [r, c] );
                                 _hiddenSafeCellsCount--;
-                                //_hiddenCellsCount--;
 
                                 if ( _puzzleCellArray [r, c].CellValue == CellValue.Zero )
                                 {//  Add another CellValue.Zero bonus reveal.

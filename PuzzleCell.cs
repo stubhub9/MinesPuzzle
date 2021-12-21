@@ -29,14 +29,6 @@ namespace MinesPuzzle
             CellStatus = status;
         }
 
-        //// Used for updating the CellValue for the number of mines adjacent.
-        //public PuzzleCell ( int row, int col, int cellValue, CellStatus status )
-        //{
-        //    Row = row;
-        //    Col = col;
-        //    CellValue = (CellValue) cellValue;
-        //    CellStatus = status;
-        //}
 
     }
 }
