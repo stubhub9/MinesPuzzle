@@ -1,5 +1,5 @@
 # MinesPuzzle
-Minesweeper clone based off of MS WpfSamples
+Minesweeper clone, current latest project Dec21.
 
 A homestudy classroom project, and skills show piece.
 
