@@ -25,6 +25,7 @@ namespace MinesPuzzle
         static readonly LinearGradientBrush _tileBrush_Safed;
         static readonly RadialGradientBrush _tileBrush_Boom;
         static readonly RadialGradientBrush _tileBrush_Suspected;
+        static readonly RadialGradientBrush _tileBrush_Mined;
         //  End of Private Fields.
         #endregion
 
@@ -47,7 +48,7 @@ namespace MinesPuzzle
         { get => _tileBrush_Suspected; }
 
         static public RadialGradientBrush TileBrush_Mined
-        { get => _tileBrush_Suspected; }
+        { get => _tileBrush_Mined; }
 
         static public LinearGradientBrush TileBrush_Safed
         { get => _tileBrush_Safed; }
@@ -94,6 +95,12 @@ namespace MinesPuzzle
             gradStop = new GradientStop ( Color.FromRgb ( 100, 120, 190 ), .7 );
             gradStops_Suspected.Add ( gradStop );
 
+            var gradStops_Mined = new GradientStopCollection ();
+            gradStop = new GradientStop (  _color_Defeat, .9 );
+            gradStops_Mined.Add ( gradStop );
+            gradStop = new GradientStop ( Color.FromRgb ( 100, 120, 190 ), .7 );
+            gradStops_Mined.Add ( gradStop );
+
 
             var gradStops_Safed = new GradientStopCollection ();
             gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), 1.0 );
@@ -139,6 +146,7 @@ namespace MinesPuzzle
             _tileBrush_Safed = new LinearGradientBrush ( gradStops_Safed );
             _tileBrush_Boom = new RadialGradientBrush ( gradStops_Boom );
             _tileBrush_Suspected = new RadialGradientBrush ( gradStops_Suspected );
+            _tileBrush_Mined = new RadialGradientBrush ( gradStops_Mined );
 
         }
         //  End of Static Constructor
