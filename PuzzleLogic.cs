@@ -15,8 +15,8 @@ namespace MinesPuzzle
     {
         #region Events
 
-        public delegate void PuzzleStatusHandler ( PuzzleStatus gameStatus );
-        public event PuzzleStatusHandler UpdateGameStyle;
+        internal delegate void PuzzleStatusHandler ( PuzzleStatus gameStatus );
+        internal event PuzzleStatusHandler UpdateGameStyle;
 
 
         public delegate void TimerDisplayHandler ( string time );
@@ -40,14 +40,14 @@ namespace MinesPuzzle
         public int ElapsedTime
         { get => _elapsedTime; }
 
-        public PuzzleStatus PuzzleStatus
+        internal PuzzleStatus GameStatus
         { get => _puzzleStatus; }
 
         //  Provides the tags for the PuzzleGrid buttons.
         public PuzzleCell [,] PuzzleCellArray
         { get => _puzzleCells.PuzzleCellArray; }
 
-        public PuzzleCells ThePuzzleCells
+        internal PuzzleCells ThePuzzleCells
         { get => _puzzleCells; }
 
         #endregion
@@ -56,22 +56,8 @@ namespace MinesPuzzle
         //  *****          Constructor          *****          *****          *****          *****          *****          Constructor          *****          *****          *****
         public PuzzleLogic ( int numberOfRows, int numberOfMines )
         {
-            _puzzleCells = new PuzzleCells ( numberOfRows, numberOfMines );
             InitializeTimer ();
-            InitializeVars ();
-
-        }
-
-        private void InitializeVars ()
-        {
-            _puzzleStatus = PuzzleStatus.GameNew;
-            _dispatcherTimer.Start ();
-            _elapsedTime = 0;
-
-            //_isGameLost = false;
-            //_isGameOver = false;
-            //_isGamePaused = true;
-            //_isGameWon = false;
+            InitializeVars ( numberOfRows, numberOfMines );
         }
 
 
@@ -80,6 +66,17 @@ namespace MinesPuzzle
             _dispatcherTimer = new DispatcherTimer ();
             _dispatcherTimer.Tick += /*new*/ DispatcherTimer_Tick;
             _dispatcherTimer.Interval = new TimeSpan ( 0, 0, 1 );
+        }
+
+        private void InitializeVars ( int numberOfRows, int numberOfMines )
+        {
+            _puzzleCells = new PuzzleCells ( numberOfRows, numberOfMines );
+            _puzzleCells.UpdateGrid += UpdatePuzzleStatus;
+
+            _puzzleStatus = PuzzleStatus.GameNew;
+            _elapsedTime = 0;
+            _dispatcherTimer.Start ();
+
         }
         //  End Constructor Method Group
         #endregion 
@@ -101,44 +98,22 @@ namespace MinesPuzzle
 
 
         
-        public List<PuzzleCell> TileWasSelected ( int row, int col )
+        public void TileWasSelected ( int row, int col )
         {
-
-            var updatedTiles = new List<PuzzleCell> ();
-
-
             if ( PuzzleStatusCheck () )
             {
-                updatedTiles = _puzzleCells.UpdateSelectedCell ( row, col );
-
-                //  Checking for state changes.
-                if ( _puzzleCells.AllCellsRevealed )
-                {
-                    _puzzleStatus = PuzzleStatus.GameVictory;
-                }
-                if ( _puzzleCells.MineWasRevealed )
-                {
-                    _puzzleStatus = PuzzleStatus.GameDefeat;
-                }
+                _puzzleCells.UpdateSelectedCell ( row, col );
             }
-            return updatedTiles;
         }
 
 
 
-        public PuzzleCell TileWasRightClicked ( int row, int col )
+        public void TileWasRightClicked ( int row, int col )
         {
             if ( PuzzleStatusCheck () )
             {
-                // Using PuzzleCellsEvent
                 _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
-                //Fired a delegate to update the suspect cells countdown label.
-
-                //// OR
-                //var puzzleCell = _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
             }
-            var puzzleCell = PuzzleCellArray [row, col];
-            return puzzleCell;
         }
         #endregion
 
@@ -147,7 +122,20 @@ namespace MinesPuzzle
         //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****      
 
 
-        private void DispatcherTimer_Tick ( object sender, EventArgs e )
+        void UpdatePuzzleStatus ( object sender, PuzzleCellsEventArgs e )
+        {
+            //  Checking for state changes.
+            if ( e.AllCellsRevealed )
+            { _puzzleStatus = PuzzleStatus.GameVictory; }
+
+            else if ( e.HasBoom )
+            { _puzzleStatus = PuzzleStatus.GameDefeat; }
+        }
+
+
+
+
+        void DispatcherTimer_Tick ( object sender, EventArgs e )
         {
             if ( _puzzleStatus == PuzzleStatus.GameOn )
             {
@@ -171,7 +159,7 @@ namespace MinesPuzzle
         /// Is the game active?
         /// </summary>
         /// <returns></returns>
-        private bool PuzzleStatusCheck ()
+        bool PuzzleStatusCheck ()
         {
             var proceed = false;
             if ( !(( _puzzleStatus == PuzzleStatus.GameVictory ) || ( _puzzleStatus == PuzzleStatus.GameDefeat )) )
@@ -186,7 +174,6 @@ namespace MinesPuzzle
             }
             return proceed;
         }
-
 
 
         #endregion

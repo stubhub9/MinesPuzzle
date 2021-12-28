@@ -24,31 +24,33 @@ namespace MinesPuzzle
         //  Using the next line can tell me what the current C# revision is (7.3).
         //#error version
 
-//  Set the puzzle tiles to   <FontFamily ="Arial Black"/>
 
-        //  Private Fields
+        #region  Private Fields
+        //  *****          Private Fields          *****          *****          *****          *****          *****        Private Fields          *****          *****          *****          *****
         private PuzzleGrid _puzzleGrid;
 
         // Provide default values for now.
         // Used to set Puzzle: Grid, Logic and Cells
         private Size _puzzleSize = new Size ( 500.0, 500.0 );
         private int _numberOfRows = 10;
-        private int _numberOfMines = 25;
+        private int _numberOfMines = 15;
+        #endregion
 
 
-
-        //  The slidepuzzle included drop shadow effects here, for the status label.
+        #region  Constructor Method Group
+        //  *****          Constructor          *****          *****          *****          *****          *****          Constructor          *****          *****          *****
         public MainWindow ()
         {
             InitializeComponent ();
-//TODO:  Need to play with this>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            //TODO:  Need to play with this>>>>>>>>>>>>>>>>>>>>>>>>>>>
             //this.SizeToContent = SizeToContent.WidthAndHeight;
             NewPuzzleGrid ();
-            //_puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateTilesTillClear += UpdateMinesDisplay;
-            //_puzzleGrid._puzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
-
         }
+        #endregion
 
+
+        #region  Private   Methods
+        //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****   
 
         private void NewGameButton_Click ( object sender, RoutedEventArgs e )
         {
@@ -70,27 +72,21 @@ namespace MinesPuzzle
             if ( _puzzleGrid != null )
             {
                 PuzzleHostingPanel.Children.Remove ( _puzzleGrid );
-                //TODO:  I need to do this?
-                //_puzzleGrid._puzzleLogic.UpdateTimeDisplay -= UpdateTimeDisplay;
             }
-
 
             _puzzleGrid = new PuzzleGrid ( _puzzleSize, _numberOfRows, _numberOfMines )
             {
                 PuzzleSize = _puzzleSize,
             };
-            //_puzzleGrid.PuzzleSize = _puzzleSize;
-
             PuzzleHostingPanel.Children.Add ( _puzzleGrid );
             _puzzleGrid.Height = 600;
             _puzzleGrid.Width = 600;
 
 
-            _puzzleGrid._puzzleLogic.ThePuzzleCells.UpdateGrid += UpdateMinesDisplay;
-            _puzzleGrid._puzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
-            _puzzleGrid._puzzleLogic.Ready ();
+            _puzzleGrid.ThePuzzleLogic.ThePuzzleCells.UpdateGrid += UpdateMinesDisplay;
+            _puzzleGrid.ThePuzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
+            _puzzleGrid.ThePuzzleLogic.Ready ();
         }
-
 
 
         private void UpdateTimeDisplay ( string elapsedTime )
@@ -99,12 +95,12 @@ namespace MinesPuzzle
             timerDisplay.Content = elapsedTime;
         }
 
-        //private void UpdateMinesDisplay ( string hiddenTiles, PuzzleCell cell )
+
         private void UpdateMinesDisplay ( object sender, PuzzleCellsEventArgs e )
         {
-            mineCountDisplay_Label.Content = e.Mines.ToString () ;
+            mineCountDisplay_Label.Content = e.Mines.ToString ();
         }
-
+        #endregion
 
     }
 }

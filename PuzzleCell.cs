@@ -15,13 +15,13 @@ namespace MinesPuzzle
     {
         public int Row { get; set; }
         public int Col { get; set; }
-        public CellValue CellValue { get; set; }
+        internal CellValue CellValue { get; set; }
         public CellStatus CellStatus { get; set; }
 
         //  Constructors  ******************************************************************************
 
         //  Used for mine placement.
-        public PuzzleCell ( int row, int col, CellValue value, CellStatus status )
+        internal PuzzleCell ( int row, int col, CellValue value, CellStatus status )
         {
             Row = row;
             Col = col;
@@ -29,14 +29,6 @@ namespace MinesPuzzle
             CellStatus = status;
         }
 
-        // Used for updating the CellValue for the number of mines adjacent.
-        public PuzzleCell ( int row, int col, int cellValue, CellStatus status )
-        {
-            Row = row;
-            Col = col;
-            CellValue = (CellValue) cellValue;
-            CellStatus = status;
-        }
 
     }
 }

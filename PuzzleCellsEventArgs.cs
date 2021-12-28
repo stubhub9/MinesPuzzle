@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace MinesPuzzle
 {
-    public class PuzzleCellsEventArgs
+    class PuzzleCellsEventArgs
     {
         public List<PuzzleCell> Cells { get; set; }
         public string Mines { get; set; }
+        public bool HasBoom { get; set; }
+        public bool AllCellsRevealed { get; set; }
     }
 }

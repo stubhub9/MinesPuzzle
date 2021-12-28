@@ -36,29 +36,17 @@ namespace MinesPuzzle
 
         /// <summary>
         ///   Enables updating (PuzzleGrid) UI buttons based on row and column.
-        ///   Could inherit from Button and add enum Properties
+        ///   Could inherit from Button and add enum Properties.
         /// </summary>
         private Button [,] _puzzleGridTiles;
-        public PuzzleLogic _puzzleLogic;
 
-        //private int _numberOfMines;
-        //private int _numberOfRows;
-        //private Size _gridSize;
+        PuzzleLogic _puzzleLogic;
 
-        ////private Brush _tileBrush_Boom;
-        ////private Brush _tileBrush_Revealed;
-        ////private Brush _tileBrush_Suspected;
-        ////private Brush _tileBrush_Unknown;
-        ////private Brush _tileBrush_Safed;
-        //  End of Private Fields
         #endregion
 
 
         #region  Properties
         //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****          *****
-
-        //public int NumberOfRows
-        //{ get => _numberOfRows; }
 
         //  Set by MainWindow default 500.0, 500.0
         public Size PuzzleSize
@@ -67,165 +55,50 @@ namespace MinesPuzzle
             set;
         }
 
+
+        public PuzzleLogic ThePuzzleLogic
+        { get => _puzzleLogic; }
+
         #endregion
 
 
         #region  Events
         //  *****         Events          *****          *****          *****          *****          *****          Events          *****          *****          *****          *****
 
-        public event EventHandler SuspectedMinesCountdown_Changed;
-
-        //  Provide event handlers for the MainWindow to tie into.
-        public event EventHandler PuzzleWon;
-        public event EventHandler<HandledEventArgs> MoveMade;
-        public event EventHandler ClockTick;
-
-
         //  Event Handlers  *********************************************************************************************************************
-        //TODO:  ??Move OnClick to MainWindow??  
-        // Reveal a cell, ignore if cell is already revealed or suspected..
 
         private void OnPuzzleButtonClick ( object sender, RoutedEventArgs e )
         {
+            //  ?Only buttons are clickable, in the PuzzleGrid; so var b is always button.
             var b = e.Source as Button;
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
-
-            var updatedCells = _puzzleLogic.TileWasSelected ( row, col );
-
-            if ( updatedCells.Count == 0 )
-                return;
-
-            else
-            {
-                foreach ( var item in updatedCells )
-                {
-                    var updatedTile = _puzzleGridTiles [item.Row, item.Col];
-                    updatedTile.Tag = item;
-
-                    if ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameDefeat )
-                    {
-                        //  This should be the mine; followed by the mine list.
-                        if ( item.CellStatus == CellStatus.Boom )
-                        {
-                            updatedTile.Content = "";
-                            updatedTile.Background = PuzzleColors.TileBrush_Boom;
-                        }
-                        else
-                        if ( item.CellStatus == CellStatus.Suspected )
-                        {
-                            updatedTile.Content = "?";
-                            updatedTile.Background = PuzzleColors.TileBrush_Safed;
-
-                        }
-                        else
-                        {
-                            updatedTile.Content = "*";
-                            updatedTile.Background = PuzzleColors.TileBrush_Mined;
-                            ////UpdateTiles_IsVictory ( false );
-                        }
-                    }
-                    //  End of Defeat branch.
-
-                    //else if ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory )
-                    //{
-
-                    //}
-                    else
-                    {
-                        updatedTile.Content = ( (int)item.CellValue ).ToString ();
-                        updatedTile.Background = PuzzleColors.TileBrush_Revealed;
-                        //updatedTile.Background = _tileBrush_Revealed;
-                    }
-                }
-            }
-            if ( ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory ) || ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameDefeat ) )
-            { UpdateTiles_IsVictory ( _puzzleLogic.PuzzleStatus == PuzzleStatus.GameVictory ); }
-            //  End OnPuzzleButtonClick
+            _puzzleLogic.TileWasSelected ( row, col );
         }
 
-        private void UpdateTiles_IsVictory ( bool isVictory )
-        {
-            foreach ( var button in _puzzleGridTiles )
-            {
-                if ( isVictory )
-                {
-                    var tag = (PuzzleCell)button.Tag;
-                    if ( tag.CellValue == CellValue.Mine )
-                    {   button.Background = PuzzleColors.TileBrush_Safed;  }
-
-                    else
-                    { button.Background = PuzzleColors.TileBrush_Victory; }
-                }
-
-                else
-                {
-                    if ( button.Background == PuzzleColors.TileBrush_Unknown )
-                    {
-                        button.Background = PuzzleColors.TileBrush_Defeat;
-                    }
-                }
-            }
-        }
 
 
 
         //  Flag or unflag a hidden cell as being presumed as a mine. 
-        private void OnPuzzleButtonRightClick ( object sender, RoutedEventArgs e )
+        private void OnPuzzleButtonRightMouseDown ( object sender, RoutedEventArgs e )
         {
-            var button = e.Source as Button;
+            Button button = e.Source as Button;
+
+            //  Mouse right button down, was targeting non-button elements; re grid through margins..
+            if ( button is null )
+            { return; }
+
             var row = (int)button.GetValue ( RowProperty );
             var col = (int)button.GetValue ( ColumnProperty );
-            var updatedCell = _puzzleLogic.TileWasRightClicked ( row, col );
-            button.Tag = updatedCell;
-
-            if ( updatedCell.CellStatus == CellStatus.Suspected )
-            { button.Background = PuzzleColors.TileBrush_Suspected; }
-            else
-            { button.Background = PuzzleColors.TileBrush_Unknown; }
-
-            //b.Background = ( updatedCell.CellStatus == CellStatus.Suspected ) ? PuzzleColors.TileBrush_Suspected : PuzzleColors.TileBrush_Unknown;
-            button.Content = ( updatedCell.CellStatus == CellStatus.Suspected ) ? "?" : "";
+            _puzzleLogic.TileWasRightClicked ( row, col );
         }
 
 
 
         private void PuzzleGridLoaded ( object sender, RoutedEventArgs e )
         {
-
         }
-        //  End of Events &  Methods group
-        #endregion
-
-        #region  ?Failed Constructor?
-        //  Constructor   ***********************************************************************************************************
-        //// Update constructor
-        //public PuzzleGrid ( Size puzzleSize, int numRows, int numMines )
-        //{
-        //    InitializeComponent ();
-
-        //    //  Centralize handling of all clicks in PuzzleGrid.
-        //    AddHandler ( ButtonBase.ClickEvent, new RoutedEventHandler ( OnPuzzleButtonClick ) );
-
-        //    //_puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
-        //    SetupThePuzzleGridStructure ( numRows );
-        //    //private void PuzzleGridLoaded ( object sender, RoutedEventArgs e )
-        //}
-
-        ////Create a grid, with dedicated left & right click handlers.
-        //public PuzzleGrid ()
-        //{
-        //    InitializeComponent ();
-
-        //    //  Are these properties ever used?
-        //    //NumberOfRows = numberOfRows;
-        //    //NumberOfMines = numberOfMines;
-
-
-        //    //  Centralize handling of all clicks in PuzzleGrid.
-        //    AddHandler ( ButtonBase.ClickEvent, new RoutedEventHandler ( OnPuzzleButtonClick ) );
-        //    //AddHandler ( MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightClick ) );
-        //}
+        //  End of Events  Methods group
         #endregion
 
 
@@ -236,20 +109,19 @@ namespace MinesPuzzle
         public PuzzleGrid ( Size gridSize, int numberOfRows, int numberOfMines )
         {
             InitializeComponent ();
+
             Width = gridSize.Width;
             Height = gridSize.Height;
 
             //  Centralize handling of all clicks in PuzzleGrid.
             AddHandler ( ButtonBase.ClickEvent, new RoutedEventHandler ( OnPuzzleButtonClick ) );
-            AddHandler ( ButtonBase.MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightClick ) );
+            AddHandler ( ButtonBase.MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightMouseDown ) );
 
             _puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
-
+            _puzzleLogic.ThePuzzleCells.UpdateGrid += UpdateTiles;
 
             SetupThePuzzleGridStructure ( numberOfRows );
         }
-
-
 
 
 
@@ -288,17 +160,11 @@ namespace MinesPuzzle
                         //Content = ((int) tag.CellValue).ToString (),
                         Margin = new Thickness ( 1, 1, 1, 1 ),
                     };
-                    //////TODO:  Remove TEST
-                    ////if ( tag.CellValue == CellValue.Mine )
-                    ////{
-                    ////    button.Background = PuzzleColors.TileBrush_Boom;
-                    ////    button.Content = "";
-                    ////}
 
                     button.SetValue ( RowProperty, row );
                     button.SetValue ( ColumnProperty, col );
-                    //      SlidePuzzle doesn't specify Children (shared property?) either.
 
+                    //  Panel.Children
                     Children.Add ( button );
                     _puzzleGridTiles [row, col] = button;
                 }
@@ -306,6 +172,126 @@ namespace MinesPuzzle
 
             //  End SetupThePuzzleGridStructure method.
         }
+        #endregion
+
+
+
+
+
+        #region  Private   Methods
+        //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****    
+
+        #region  UpdateTiles  Method Group
+        void UpdateTiles ( object sender, PuzzleCellsEventArgs e )
+        {
+            var cells = e.Cells;
+            if ( cells.Count == 0 )
+            { return; }
+
+            UpdateTiles_Cells ( e );
+
+            if ( ( _puzzleLogic.GameStatus == PuzzleStatus.GameVictory ) || ( _puzzleLogic.GameStatus == PuzzleStatus.GameDefeat ) )
+            {
+                UpdateTiles_IsVictory ( _puzzleLogic.GameStatus == PuzzleStatus.GameVictory );
+            }
+        }
+
+
+        void UpdateTiles_Cells ( PuzzleCellsEventArgs e )
+        {
+            foreach ( var cell in e.Cells )
+            {
+                var tile = _puzzleGridTiles [cell.Row, cell.Col];
+                tile.Tag = cell;
+
+                if ( _puzzleLogic.GameStatus == PuzzleStatus.GameDefeat )
+                { UpdateTiles_Boom ( tile, cell ); }
+
+                else
+                {
+                    switch ( cell.CellStatus )
+                    {
+                        case CellStatus.Hidden:
+                            tile.Background = PuzzleColors.TileBrush_Unknown;
+                            tile.Content = "";
+                            break;
+                        case CellStatus.Suspected:
+                            tile.Background = PuzzleColors.TileBrush_Suspected;
+                            tile.Content = "?";
+                            break;
+                        case CellStatus.Revealed:
+                        default:
+                            tile.Content = ( (int)cell.CellValue ).ToString ();
+                            tile.Background = PuzzleColors.TileBrush_Revealed;
+                            break;
+                    }
+                }
+                //  End of foreach.
+            }
+        }
+
+
+        void UpdateTiles_Boom ( Button tile, PuzzleCell cell )
+        {
+            //  This should be the mine; followed by the mine list.
+            switch ( cell.CellStatus )
+            {
+                case CellStatus.Boom:
+                    tile.Content = "";
+                    tile.Background = PuzzleColors.TileBrush_Boom;
+                    break;
+
+                case CellStatus.Hidden:
+                case CellStatus.Suspected:
+                    tile.Content = "?";
+                    tile.Background = PuzzleColors.TileBrush_Safed;
+                    break;
+
+                case CellStatus.Revealed:
+                    //default:
+                    tile.Content = "*";
+                    tile.Background = PuzzleColors.TileBrush_Mined;
+                    break;
+            }
+            //  End of Defeat method.
+        }
+
+
+        private void UpdateTiles_IsVictory ( bool isVictory )
+        {
+            foreach ( var button in _puzzleGridTiles )
+            {
+                var tag = (PuzzleCell)button.Tag;
+
+                if ( isVictory )
+                {
+
+                    if ( tag.CellValue == CellValue.Mine )
+                    {
+                        button.Background = PuzzleColors.TileBrush_Safed;
+                        button.Content = "!";
+                    }
+
+                    else
+                    {
+                        button.Background = PuzzleColors.TileBrush_Victory;
+                        button.Content = "";
+                    }
+                    //  End of, isVictory.
+                }
+
+                //  else, WAS NOT Victory.
+                else
+                {
+                    if ( button.Background == PuzzleColors.TileBrush_Unknown )
+                    {
+                        button.Background = PuzzleColors.TileBrush_Defeat;
+                    }
+                }
+            }
+        }
+        #endregion
+
         #endregion
 
 

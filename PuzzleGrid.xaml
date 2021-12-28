@@ -12,13 +12,11 @@
             Grid.Column="1" Grid.Row="2"
             >
 
-    <!--xmlns:local="clr-namespace:MinesPuzzle"-->
-
     <!--<Grid>-->
     <Grid.Resources>
         <SolidColorBrush x:Name="HiddenBrush" x:Key="HiddenBrush" Color="Transparent"/>
         <SolidColorBrush x:Name="HiddenTileBrush" x:Key="HiddenTileBrush" Color="SlateBlue"/>
-<!--TODO:  Type TileButton :  a Button with extra Properties for Style hooks.-->
+        <!--TODO:  Type TileButton :  a Button with extra Properties for Style hooks.-->
         <Style x:Key="PuzzleButtonStyle">
             <Setter Property="Button.Template">
                 <Setter.Value>
@@ -68,8 +66,8 @@
                             </Border.RenderTransform>
 
                             <!--        Guessing that this is for numbered slidepuzzle tiles.-->
-                            <!--<TextBlock--> 
-                                    <!--Foreground="{DynamicResource NumberLabelBrush}"
+                            <!--<TextBlock-->
+                            <!--Foreground="{DynamicResource NumberLabelBrush}"
                                     FontSize="24" FontWeight="Bold">
                                     <ContentPresenter/>
                             </TextBlock>-->
@@ -103,11 +101,11 @@
         </Style>
 
     </Grid.Resources>
-    
-    
-    
-    
-    
+
+
+
+
+
 
 </Grid>
 <!--</UserControl>-->

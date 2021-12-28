@@ -6,29 +6,31 @@ using System.Threading.Tasks;
 
 namespace MinesPuzzle
 {
-    public class PuzzleCells
+    class PuzzleCells
     {
         #region  Events group
         public event EventHandler<PuzzleCellsEventArgs> UpdateGrid;
 
-        //protected virtual void OnPuzzleArrayChanged ( PuzzleEventArgs e )
-        protected virtual void OnPuzzleArrayChanged ( int mines, List<PuzzleCell> cells )
+         void OnPuzzleCellsChanged ( int mines, List<PuzzleCell> cells )
         {
             var e = new PuzzleCellsEventArgs ()
             {
                 Cells = cells,
                 Mines = mines.ToString (),
+                AllCellsRevealed = LastCellRevealed,
+                HasBoom = MineWasRevealed,
             };
-            //  object  sender, Args  e
+            //  object  sender, EventArgs  e
             UpdateGrid?.Invoke ( this, e );
         }
+
+
         //  End events group.
         #endregion
 
 
         #region  Private Fields
         //  *****          Private Fields          *****          *****          *****          *****          *****          *****          Private Fields          *****           *****
-        //private int _hiddenCellsCount;
         private int _hiddenSafeCellsCount;
         private bool _haveBoom;
         private int _minesToClear;
@@ -40,7 +42,7 @@ namespace MinesPuzzle
 
         #region Properties
         //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****          *****
-        public bool AllCellsRevealed
+        public bool LastCellRevealed
         {
             get
             {
@@ -65,19 +67,15 @@ namespace MinesPuzzle
             Constructor_InitializeVars ( rows, mines );
             Constructor_InitializeArray ( rows );
             Constructor_SetMines ( rows, mines );
-
-
-            //UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [0, 0] );
         }
 
         private void Constructor_InitializeVars ( int rows, int mines )
         {
             _haveBoom = false;
             _hiddenSafeCellsCount = ( rows * rows ) - mines;
-            //_hiddenCellsCount = ( rows * rows );
             _minesToClear = mines;
 
-            // Just to suppress a message.
+            // Just to suppress an Error List  info Message.
             _mineCellsList = new List<PuzzleCell> ();
         }
 
@@ -133,21 +131,21 @@ namespace MinesPuzzle
         public void Ready ()
         {
             var _ = new List<PuzzleCell> ();
-            OnPuzzleArrayChanged ( _minesToClear, _ );
+            OnPuzzleCellsChanged ( _minesToClear, _ );
         }
 
 
 
         #region  UpdateCells Public Method Group
-        //public (List<PuzzleCell> UpdatedCells, bool HaveBoom) UpdateSelectedCell ( int row, int col )
-        public List<PuzzleCell> UpdateSelectedCell ( int row, int col )
+        public void UpdateSelectedCell ( int row, int col )
         {
             var selectedCell = _puzzleCellArray [row, col];
-            var updatedCells = new List<PuzzleCell> ();
 
             //  Only hidden cells are affected by this method.
             if ( selectedCell.CellStatus == CellStatus.Hidden )
             {
+                var updatedCells = new List<PuzzleCell> ();
+
                 switch ( selectedCell.CellValue )
                 {
 
@@ -159,9 +157,12 @@ namespace MinesPuzzle
                         updatedCells.AddRange ( _mineCellsList );
                         break;
 
+
                     default:
                         _hiddenSafeCellsCount--;
-                        //_hiddenCellsCount--;
+                        if ( LastCellRevealed )
+                        { _minesToClear = 0;   }
+
                         selectedCell.CellStatus = CellStatus.Revealed;
                         _puzzleCellArray [row, col] = selectedCell;
                         updatedCells.Add ( selectedCell );
@@ -170,14 +171,10 @@ namespace MinesPuzzle
                         { updatedCells.AddRange ( Array_AdjacentCells ( row, col, AdjacentCellsTask.ZeroCellRevealed ) ); }
 
                         break;
-
-
                 }
+
+                OnPuzzleCellsChanged ( _minesToClear, updatedCells );
             }
-            ////  Return a Tuple.
-            //return (updatedCells, _haveBoom);
-            OnPuzzleArrayChanged ( _minesToClear, updatedCells );
-            return updatedCells;
         }
 
 
@@ -215,48 +212,39 @@ namespace MinesPuzzle
         #endregion
 
 
-        //public void ToggleCellStatusAndSusCellsCount ( int row, int col )
-        public PuzzleCell ToggleCellStatusAndSusCellsCount ( int row, int col )
+        public void ToggleCellStatusAndSusCellsCount ( int row, int col )
         {
-            var selectedCell = new PuzzleCell ();
-            //var toggledCell = _puzzleCellArray [row, col];
-            //switch ( toggledCell.CellStatus )
-            switch ( _puzzleCellArray [row, col].CellStatus )
+            if ( ( _puzzleCellArray [row, col].CellStatus == CellStatus.Hidden ) || ( _puzzleCellArray [row, col].CellStatus == CellStatus.Suspected ) )
             {
-                //  Only hidden and suspected cells are affected, ignoring all others.
-                case CellStatus.Hidden:
-                    _puzzleCellArray [row, col].CellStatus = CellStatus.Suspected;
-                    _minesToClear--;
+                switch ( _puzzleCellArray [row, col].CellStatus )
+                {
+                    //  Only hidden and suspected cells are affected, ignoring all others.
+                    case CellStatus.Hidden:
+                        _puzzleCellArray [row, col].CellStatus = CellStatus.Suspected;
+                        _minesToClear--;
+                        break;
 
-                    //_hiddenCellsCount--;
-                    break;
+                    case CellStatus.Suspected:
+                        _puzzleCellArray [row, col].CellStatus = CellStatus.Hidden;
+                        _minesToClear++;
+                        break;
+                }
 
-                case CellStatus.Suspected:
-                    _puzzleCellArray [row, col].CellStatus = CellStatus.Hidden;
-                    _minesToClear++;
+                var selectedCell = _puzzleCellArray [row, col];
 
-                    //_hiddenCellsCount++;
-                    break;
+                var updatedCells = new List<PuzzleCell> { selectedCell };
+                OnPuzzleCellsChanged ( _minesToClear, updatedCells );
             }
-            //  Update the MainWindow display and the right clicked tile; with an event.
-            //UpdateTilesTillClear?.Invoke ( _hiddenCellsCount.ToString (), _puzzleCellArray [row, col] );
-            //UpdateTilesTillClear?.Invoke ( _minesToClear.ToString (), _puzzleCellArray [row, col] );
-            //  Returns an updated cell for the button's tag.
-            //var updatedCells = new List<PuzzleCell> ();
-            //updatedCells.Add ( _puzzleCellArray [row, col] );
-            //return updatedCells;
-            selectedCell = _puzzleCellArray [row, col];
-            var updatedCells = new List<PuzzleCell> ();
-            updatedCells.Add ( selectedCell );
-            OnPuzzleArrayChanged ( _minesToClear, updatedCells );
-            return selectedCell;
         }
-        #endregion //  Public Methods
+        //  End of Public Methods
+        #endregion 
+
+
 
         #region  Private Helper Methods
         //  Updates CellValues next to mines or clears.
-        private enum AdjacentCellsTask { ZeroCellRevealed, PlacedMine }
-        private List<PuzzleCell> Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
+        enum AdjacentCellsTask { ZeroCellRevealed, PlacedMine }
+        List<PuzzleCell> Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
         {
             var returnCellList = new List<PuzzleCell> ();
             var zeroCellList = new List<PuzzleCell> ();
@@ -302,7 +290,6 @@ namespace MinesPuzzle
                                 _puzzleCellArray [r, c].CellStatus = CellStatus.Revealed;
                                 returnCellList.Add ( _puzzleCellArray [r, c] );
                                 _hiddenSafeCellsCount--;
-                                //_hiddenCellsCount--;
 
                                 if ( _puzzleCellArray [r, c].CellValue == CellValue.Zero )
                                 {//  Add another CellValue.Zero bonus reveal.
