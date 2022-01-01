@@ -242,6 +242,9 @@ namespace MinesPuzzle
 
 
         #region  Private Helper Methods
+        /// <summary>
+        /// TODO:  REDO:  using IEnumerables, LINQ    **************                             *************************                           ********************                        ***********************                        **********************
+        /// </summary>
         //  Updates CellValues next to mines or clears.
         enum AdjacentCellsTask { ZeroCellRevealed, PlacedMine }
         List<PuzzleCell> Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
@@ -312,7 +315,7 @@ namespace MinesPuzzle
             } while ( continueDoLoop );
             return returnCellList;
         }
-
+        //  End of Array_AdjacentCells.
         #endregion  //  End Private Helper Methods
 
 
