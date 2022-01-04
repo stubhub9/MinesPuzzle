@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
+
 
 namespace MinesPuzzle
 {
-    class PuzzleCellsAlpha
+    class PuzzleCells
     {
+    //{
         #region  Events group
         public event EventHandler<PuzzleCellsEventArgs> UpdateGrid;
 
-         void OnPuzzleCellsChanged ( int mines, List<PuzzleCell> cells )
+        void OnPuzzleCellsChanged ( int mines, List<PuzzleCell> cells )
         {
             var e = new PuzzleCellsEventArgs ()
             {
@@ -37,11 +40,20 @@ namespace MinesPuzzle
 
         private List<PuzzleCell> _mineCellsList;
 
+        //  PuzzleCell [,] is not currently:  IEnumerable.
         private PuzzleCell [,] _puzzleCellArray;
+        //  Add ?indexer method? or convert to 
+        private PuzzleCell [] _puzzleCellLongArray;
+        private List<PuzzleCell> _puzzleCellsList;
+        ////   IEnum as List<PuzzleCell>; not PuzzleCell!!!!!!!!!!!!!!!!1111!!!!!!!!!!!!!!!!!!!
+        //private List<List<PuzzleCell>> _puzzleCellsJaggedList;
         #endregion
 
         #region Properties
         //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****          *****
+       //public static PuzzleCell [,] PuzzleCellsStat
+       // { get => _ }
+        
         public bool LastCellRevealed
         {
             get
@@ -62,7 +74,7 @@ namespace MinesPuzzle
 
         #region  Constructor Method Group
         //  *****          Constructor          *****          *****          *****          *****          *****          *****          *****          *****          *****          *****
-        public PuzzleCellsAlpha ( int rows = 10, int mines = 15 )
+        public PuzzleCells ( int rows = 10, int mines = 15 )
         {
             Constructor_InitializeVars ( rows, mines );
             Constructor_InitializeArray ( rows );
@@ -161,7 +173,7 @@ namespace MinesPuzzle
                     default:
                         _hiddenSafeCellsCount--;
                         if ( LastCellRevealed )
-                        { _minesToClear = 0;   }
+                        { _minesToClear = 0; }
 
                         selectedCell.CellStatus = CellStatus.Revealed;
                         _puzzleCellArray [row, col] = selectedCell;
@@ -237,7 +249,124 @@ namespace MinesPuzzle
             }
         }
         //  End of Public Methods
-        #endregion 
+        #endregion
+
+
+
+        //List<PuzzleCell> Array_AdjacentCellsWrapper ( int row, int col, AdjacentCellsTask task )
+        //{
+
+
+        //}
+
+
+        //List<PuzzleCell> Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
+        List<PuzzleCell> Array_AdjacentCellsQuery ( int row, int col, AdjacentCellsTask task )
+        {
+
+            var returnCellList = new List<PuzzleCell> ();
+            var zeroCellList = new List<PuzzleCell> ();
+            bool continueDoLoop;
+            do
+            {
+                continueDoLoop = false;
+
+
+
+                //  Convert 2D _puzzleCellArray to IEnumurable...
+                //  this way, and update for each zero loop.
+                List<PuzzleCell> puzzleCells = new List<PuzzleCell> ();
+                foreach ( var item in _puzzleCellArray )
+                {
+                    puzzleCells.Add ( item );
+                }
+
+
+
+
+                //  Obtain adjacent cells;
+                //  Could skip, chunk, and range a targeted source set?
+                IEnumerable<PuzzleCell> queryAdjacentPuzzleCells =
+                    from cell in puzzleCells
+                    where ( ( cell.Row >= row - 1 ) && ( cell.Row <= row + 1 ) )
+                    && ( ( cell.Col >= col - 1 ) && ( cell.Col <= col + 1 ) )
+                    && !( ( cell.Col == col ) && ( cell.Row == row ) )
+                    select cell;
+
+
+
+                foreach ( PuzzleCell puzzleCell in queryAdjacentPuzzleCells )
+                {
+
+
+                    if ( task == AdjacentCellsTask.PlacedMine )
+                    {
+                        if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellValue != CellValue.Mine )
+                        {
+                            //  Adjacent cells are now adjacent to an additional mine.
+                            _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellValue++;
+                        }  //  Returns an unused, empty List <PuzzleCell>.
+                    }
+
+
+                    #region CellValueZero Task
+                    else if ( ( task == AdjacentCellsTask.ZeroCellRevealed )
+                        && !( ( puzzleCell.Row == row ) && ( puzzleCell.Col == col ) ) )
+                    { //  Return a list of newly revealed cells, adjacent to but not including the selected cell.
+
+                        if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellStatus == CellStatus.Suspected )
+                        {//  Ignore return, and cell is now hidden.
+                            ToggleCellStatusAndSusCellsCount ( puzzleCell.Row, puzzleCell.Col );
+                        }
+
+                        if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellStatus == CellStatus.Hidden )
+                        { //  Cell is now revealed and add to return list.
+                            _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellStatus = CellStatus.Revealed;
+                            returnCellList.Add ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col] );
+                            _hiddenSafeCellsCount--;
+
+                            if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellValue == CellValue.Zero )
+                            {//  Add another CellValue.Zero bonus reveal.
+                                zeroCellList.Add ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col] );
+                            }
+                        }
+                    }
+                    #endregion//  End ZeroCellRevealed
+                }
+                
+
+                if ( zeroCellList.Count != 0 )
+                {
+                    row = zeroCellList [0].Row;
+                    col = zeroCellList [0].Col;
+                    zeroCellList.RemoveAt ( 0 );
+                    continueDoLoop = true;
+                }
+
+
+
+
+
+
+
+            } while ( continueDoLoop );
+
+
+
+            return returnCellList;
+        }
+
+
+        //bool IsAdjacent (PuzzleCell centerPuzzleCell, PuzzleCell questionablePuzzleCell)
+        //{
+        //    bool isAdjacent = false;
+
+
+
+
+        //    return isAdjacent;
+        //}
+
 
 
 
@@ -317,6 +446,8 @@ namespace MinesPuzzle
         }
         //  End of Array_AdjacentCells.
         #endregion  //  End Private Helper Methods
+
+
 
 
 

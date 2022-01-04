@@ -230,7 +230,12 @@ namespace MinesPuzzle
             }
         }
 
-
+        /// <summary>
+        /// TODO:  REDO:  using LINQ & IEnumerables  
+        /// ?save this old method as an alternate?? or is that what git is for??  re:  main branch!!!
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <param name="cell"></param>
         void UpdateTiles_Boom ( Button tile, PuzzleCell cell )
         {
             //  This should be the mine; followed by the mine list.
@@ -256,7 +261,10 @@ namespace MinesPuzzle
             //  End of Defeat method.
         }
 
-
+        /// <summary>
+        /// TODO:  REDO:  LINQ
+        /// </summary>
+        /// <param name="isVictory"></param>
         private void UpdateTiles_IsVictory ( bool isVictory )
         {
             foreach ( var button in _puzzleGridTiles )

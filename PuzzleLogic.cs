@@ -156,7 +156,7 @@ namespace MinesPuzzle
 
 
         /// <summary>
-        /// Is the game active?
+        /// Is the game active or activate?
         /// </summary>
         /// <returns></returns>
         bool PuzzleStatusCheck ()
