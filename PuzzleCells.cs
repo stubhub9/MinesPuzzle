@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinesPuzzle
 {
-    class PuzzleCells
+    class PuzzleCellsAlpha
     {
         #region  Events group
         public event EventHandler<PuzzleCellsEventArgs> UpdateGrid;
@@ -62,7 +62,7 @@ namespace MinesPuzzle
 
         #region  Constructor Method Group
         //  *****          Constructor          *****          *****          *****          *****          *****          *****          *****          *****          *****          *****
-        public PuzzleCells ( int rows = 10, int mines = 15 )
+        public PuzzleCellsAlpha ( int rows = 10, int mines = 15 )
         {
             Constructor_InitializeVars ( rows, mines );
             Constructor_InitializeArray ( rows );

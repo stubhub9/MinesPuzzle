@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace MinesPuzzle
 {
-    class PuzzleCells1
+    class PuzzleCells
     {
     //{
         #region  Events group
@@ -74,7 +74,7 @@ namespace MinesPuzzle
 
         #region  Constructor Method Group
         //  *****          Constructor          *****          *****          *****          *****          *****          *****          *****          *****          *****          *****
-        public PuzzleCells1 ( int rows = 10, int mines = 15 )
+        public PuzzleCells ( int rows = 10, int mines = 15 )
         {
             Constructor_InitializeVars ( rows, mines );
             Constructor_InitializeArray ( rows );
