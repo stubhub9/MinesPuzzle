@@ -58,8 +58,8 @@
     <Compile Include="CellStatus.cs" />
     <Compile Include="CellValue.cs" />
     <Compile Include="PuzzleCell.cs" />
+    <Compile Include="PuzzleCellsAlpha.cs" />
     <Compile Include="PuzzleCells.cs" />
-    <Compile Include="PuzzleCells1.cs" />
     <Compile Include="PuzzleCellsEventArgs.cs" />
     <Compile Include="PuzzleColors.cs" />
     <Compile Include="PuzzleGrid.xaml.cs">

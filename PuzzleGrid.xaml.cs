@@ -154,11 +154,13 @@ namespace MinesPuzzle
                         Tag = tag,
                         /*Style = buttonStyle,*/
                         Background = PuzzleColors.TileBrush_Unknown,
-                        Height = 30,
-                        Width = 30,
+                        Height = 32,
+                        Width = 32,
+                        BorderThickness = new Thickness (1,1,1,1),
+                        //BorderBrush= PuzzleColors.Color_Unknown,
                         /*TODO:  Remove troubleshooting. */
                         //Content = ((int) tag.CellValue).ToString (),
-                        Margin = new Thickness ( 1, 1, 1, 1 ),
+                        //Margin = new Thickness ( 1, 1, 1, 1 ),
                     };
 
                     button.SetValue ( RowProperty, row );
