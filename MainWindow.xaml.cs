@@ -45,6 +45,11 @@ namespace MinesPuzzle
             //TODO:  Need to play with this>>>>>>>>>>>>>>>>>>>>>>>>>>>
             //this.SizeToContent = SizeToContent.WidthAndHeight;
             NewPuzzleGrid ();
+
+            Loaded += ( o, e ) =>
+            {
+                this.Title = "Clear the safe tiles.";
+            };
         }
         #endregion
 
