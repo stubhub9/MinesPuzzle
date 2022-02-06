@@ -20,7 +20,7 @@ namespace MinesPuzzle
             {
                 Cells = cells,
                 Mines = mines.ToString (),
-                AllCellsRevealed = LastCellRevealed,
+                AllCellsRevealed = AllCellsRevealed,
                 HasBoom = MineWasRevealed,
             };
             //  object  sender, EventArgs  e
@@ -37,18 +37,12 @@ namespace MinesPuzzle
         private int _hiddenSafeCellsCount;
         private bool _haveBoom;
         private int _minesToClear;
-
-        private List<PuzzleCell> _mineCellsList;
-
-        //  PuzzleCell [,] is not currently:  IEnumerable.
-        private PuzzleCell [,] _puzzleCellArray;
-        //  Add ?indexer method?
-        //  or 
-        //  Could convert the app from 2D array to IEnum
-        private PuzzleCell [] _puzzleCellLongArray;
         private List<PuzzleCell> _puzzleCellsList;
-        ////   IEnum as List<PuzzleCell>; not PuzzleCell!!!!!!!!!!!!!!!!1111!!!!!!!!!!!!!!!!!!!
-        //private List<List<PuzzleCell>> _puzzleCellsJaggedList;
+
+
+        //OBSOLETE
+        private List<PuzzleCell> _mineCellsList;
+        private PuzzleCell [,] _puzzleCellArray;
         #endregion
 
         #region Properties
@@ -56,7 +50,7 @@ namespace MinesPuzzle
        //public static PuzzleCell [,] PuzzleCellsStat
        // { get => _ }
         
-        public bool LastCellRevealed
+        public bool AllCellsRevealed
         {
             get
             {
@@ -174,7 +168,7 @@ namespace MinesPuzzle
 
                     default:
                         _hiddenSafeCellsCount--;
-                        if ( LastCellRevealed )
+                        if ( AllCellsRevealed )
                         { _minesToClear = 0; }
 
                         selectedCell.CellStatus = CellStatus.Revealed;

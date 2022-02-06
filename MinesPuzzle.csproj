@@ -58,6 +58,7 @@
     <Compile Include="CellStatus.cs" />
     <Compile Include="CellValue.cs" />
     <Compile Include="PuzzleCell.cs" />
+    <Compile Include="PuzzleCellsA.cs" />
     <Compile Include="PuzzleCellsAlpha.cs" />
     <Compile Include="PuzzleCells.cs" />
     <Compile Include="PuzzleCellsEventArgs.cs" />

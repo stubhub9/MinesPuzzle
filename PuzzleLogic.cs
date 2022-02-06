@@ -87,6 +87,9 @@ namespace MinesPuzzle
         #region  Public Methods
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
 
+
+        //TODO??  IReady ??
+        //  Post constructor initialization.
         public void Ready ()
         {
             _puzzleCells.Ready ();
@@ -95,9 +98,8 @@ namespace MinesPuzzle
         }
 
 
-
-
-        
+        //???  Doesn't "public" imply "Entry Point"???????????
+        //  Entry point:  called from PuzzleGrid.OnPuzzleButtonClick
         public void TileWasSelected ( int row, int col )
         {
             if ( PuzzleStatusCheck () )
@@ -108,6 +110,7 @@ namespace MinesPuzzle
 
 
 
+        //  Entry point:  called from PuzzleGrid.OnPuzzleButtonRightMouseDown
         public void TileWasRightClicked ( int row, int col )
         {
             if ( PuzzleStatusCheck () )

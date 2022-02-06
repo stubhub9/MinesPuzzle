@@ -3,7 +3,7 @@
   <Class Name="MinesPuzzle.MainWindow">
     <Position X="1.5" Y="0.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAIAAAACAAAAQAAIAAIAAAAAAAAAEwAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAIAAAACAAAAQAAIAAIAAIAAAAAAEwAAAAA=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -11,7 +11,7 @@
   <Class Name="MinesPuzzle.PuzzleGrid">
     <Position X="4.25" Y="0.5" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>BIAAAAAEAAAAAAgAAEQQAgAAAgAAAgAAAgRCBgAAAEA=</HashCode>
+      <HashCode>AAAAAIgwAAAAAAAAAABQAgAAAAAAAAEAAAQCAAAAAEA=</HashCode>
       <FileName>PuzzleGrid.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -27,16 +27,17 @@
   <Class Name="MinesPuzzle.PuzzleCells" Collapsed="true">
     <Position X="9.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEAAAgRAAABRAQAAAAAEAABAAAAAAAACAAEEABAAACA=</HashCode>
+      <HashCode>AEAgAgBAAARQAAMAAAAEQAAAQgAAQAACAgAGABIAACA=</HashCode>
       <FileName>PuzzleCells.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="MinesPuzzle.PuzzleCell" Collapsed="true">
     <Position X="9.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAgAAAAgAAAAAAAg=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAEAAoAAAAgAAAAAAig=</HashCode>
       <FileName>PuzzleCell.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Struct>
   <Font Name="Ebrima" Size="10" />
 </ClassDiagram>
