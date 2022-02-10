@@ -43,9 +43,15 @@ namespace MinesPuzzle
         internal PuzzleStatus GameStatus
         { get => _puzzleStatus; }
 
+
+
+
         //  Provides the tags for the PuzzleGrid buttons.
-        public PuzzleCell [,] PuzzleCellArray
-        { get => _puzzleCells.PuzzleCellArray; }
+        //public PuzzleCell [,] PuzzleCellArray
+        //{ get => _puzzleCells.PuzzleCellArray; }
+//TODO:  DO I NEED THIS????????????????????????????????????????????????????
+
+
 
         internal PuzzleCells ThePuzzleCells
         { get => _puzzleCells; }
@@ -71,7 +77,7 @@ namespace MinesPuzzle
         private void InitializeVars ( int numberOfRows, int numberOfMines )
         {
             _puzzleCells = new PuzzleCells ( numberOfRows, numberOfMines );
-            _puzzleCells.UpdateGrid += UpdatePuzzleStatus;
+            _puzzleCells.UpdatePuzzleGridEvent += UpdatePuzzleStatus;
 
             _puzzleStatus = PuzzleStatus.GameNew;
             _elapsedTime = 0;
@@ -115,7 +121,7 @@ namespace MinesPuzzle
         {
             if ( PuzzleStatusCheck () )
             {
-                _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
+                _puzzleCells.CellStatus_ToggleSuspected_RightClicked ( row, col );
             }
         }
         #endregion

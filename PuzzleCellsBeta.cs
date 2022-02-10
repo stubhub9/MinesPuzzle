@@ -3,24 +3,24 @@
 //using System.Linq;
 //using System.Text;
 //using System.Threading.Tasks;
+//using System.Collections;
+
 
 //namespace MinesPuzzle
-//{/// <summary>
-///// TODO:  Is this faster than LINQ?
-///// TODO:  Rename file or delete?
-///// </summary>
-//    class PuzzleCellsAlpha
+//{
+//    class PuzzleCellsBeta
 //    {
+//    //{
 //        #region  Events group
 //        public event EventHandler<PuzzleCellsEventArgs> UpdateGrid;
 
-//         void OnPuzzleCellsChanged ( int mines, List<PuzzleCell> cells )
+//        void OnPuzzleCellsChanged ( int mines, List<PuzzleCell> cells )
 //        {
 //            var e = new PuzzleCellsEventArgs ()
 //            {
 //                Cells = cells,
 //                Mines = mines.ToString (),
-//                AllCellsRevealed = LastCellRevealed,
+//                AllCellsRevealed = AllCellsRevealed,
 //                HasBoom = MineWasRevealed,
 //            };
 //            //  object  sender, EventArgs  e
@@ -37,15 +37,20 @@
 //        private int _hiddenSafeCellsCount;
 //        private bool _haveBoom;
 //        private int _minesToClear;
+//        private List<PuzzleCell> _puzzleCellsList;
 
+
+//        //OBSOLETE
 //        private List<PuzzleCell> _mineCellsList;
-
 //        private PuzzleCell [,] _puzzleCellArray;
 //        #endregion
 
 //        #region Properties
 //        //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****          *****
-//        public bool LastCellRevealed
+//       //public static PuzzleCell [,] PuzzleCellsStat
+//       // { get => _ }
+        
+//        public bool AllCellsRevealed
 //        {
 //            get
 //            {
@@ -65,7 +70,7 @@
 
 //        #region  Constructor Method Group
 //        //  *****          Constructor          *****          *****          *****          *****          *****          *****          *****          *****          *****          *****
-//        public PuzzleCellsAlpha ( int rows = 10, int mines = 15 )
+//        public PuzzleCellsBeta ( int rows = 10, int mines = 15 )
 //        {
 //            Constructor_InitializeVars ( rows, mines );
 //            Constructor_InitializeArray ( rows );
@@ -163,8 +168,8 @@
 
 //                    default:
 //                        _hiddenSafeCellsCount--;
-//                        if ( LastCellRevealed )
-//                        { _minesToClear = 0;   }
+//                        if ( AllCellsRevealed )
+//                        { _minesToClear = 0; }
 
 //                        selectedCell.CellStatus = CellStatus.Revealed;
 //                        _puzzleCellArray [row, col] = selectedCell;
@@ -240,7 +245,106 @@
 //            }
 //        }
 //        //  End of Public Methods
-//        #endregion 
+//        #endregion
+
+
+
+
+//        //List<PuzzleCell> Array_AdjacentCells ( int row, int col, AdjacentCellsTask task )
+//        List<PuzzleCell> Array_AdjacentCellsQuery ( int row, int col, AdjacentCellsTask task )
+//        {
+
+//            var returnCellList = new List<PuzzleCell> ();
+//            var zeroCellList = new List<PuzzleCell> ();
+//            bool continueDoLoop;
+//            do
+//            {
+//                continueDoLoop = false;
+
+//                //TODO:  ??  Add GetEnumerator() to _puzzleCellArray??  or ???
+//                //  Convert 2D _puzzleCellArray to IEnumurable...
+//                //  this way, and update for each zero loop.
+//                List<PuzzleCell> puzzleCells = new List<PuzzleCell> ();
+//                foreach ( var item in _puzzleCellArray )
+//                {
+//                    puzzleCells.Add ( item );
+//                }
+
+//                //  Obtain adjacent cells;
+//                //  ??  Could skip, chunk, and range a targeted source set ??
+//                IEnumerable<PuzzleCell> queryAdjacentPuzzleCells =
+//                    from cell in puzzleCells
+//                    where ( ( cell.Row >= row - 1 ) && ( cell.Row <= row + 1 ) )
+//                    && ( ( cell.Col >= col - 1 ) && ( cell.Col <= col + 1 ) )
+//                    && !( ( cell.Col == col ) && ( cell.Row == row ) )
+//                    select cell;
+
+
+//                foreach ( PuzzleCell puzzleCell in queryAdjacentPuzzleCells )
+//                {
+//                    //  TODO:  For speed; could switch this set up only task,
+//                    //  to the bottom of the queue.? 
+//                    if ( task == AdjacentCellsTask.PlacedMine )
+//                    {
+//                        if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellValue != CellValue.Mine )
+//                        {
+//                            //  Adjacent cells are now adjacent to an additional mine.
+//                            _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellValue++;
+//                        }  //  Returns an unused, empty List <PuzzleCell>.
+//                    }
+
+
+//                    #region CellValueZero Task
+//                    else if ( ( task == AdjacentCellsTask.ZeroCellRevealed )
+//                        && !( ( puzzleCell.Row == row ) && ( puzzleCell.Col == col ) ) )
+//                    { //  Return a list of newly revealed cells, adjacent to but not including the selected cell.
+
+//                        if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellStatus == CellStatus.Suspected )
+//                        {//  Ignore return, and cell is now hidden.
+//                            ToggleCellStatusAndSusCellsCount ( puzzleCell.Row, puzzleCell.Col );
+//                        }
+
+//                        if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellStatus == CellStatus.Hidden )
+//                        { //  Cell is now revealed and add to return list.
+//                            _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellStatus = CellStatus.Revealed;
+//                            returnCellList.Add ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col] );
+//                            _hiddenSafeCellsCount--;
+
+//                            if ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col].CellValue == CellValue.Zero )
+//                            {//  Add another CellValue.Zero bonus reveal.
+//                                zeroCellList.Add ( _puzzleCellArray [puzzleCell.Row, puzzleCell.Col] );
+//                            }
+//                        }
+//                    }
+//                    #endregion//  End ZeroCellRevealed
+//                }
+//                //  End of queryAdjacentPuzzleCells ????????????????  the iteration/ enumeration  thereof  ???????????????????
+
+
+//                if ( zeroCellList.Count != 0 )
+//                {
+//                    row = zeroCellList [0].Row;
+//                    col = zeroCellList [0].Col;
+//                    zeroCellList.RemoveAt ( 0 );
+//                    continueDoLoop = true;
+//                }
+
+//            } while ( continueDoLoop );
+//            return returnCellList;
+//            //  End of Array_AdjacentCellsQuery method.
+//        }
+
+
+//        //bool IsAdjacent (PuzzleCell centerPuzzleCell, PuzzleCell questionablePuzzleCell)
+//        //{
+//        //    bool isAdjacent = false;
+
+
+
+
+//        //    return isAdjacent;
+//        //}
+
 
 
 
@@ -320,6 +424,8 @@
 //        }
 //        //  End of Array_AdjacentCells.
 //        #endregion  //  End Private Helper Methods
+
+
 
 
 

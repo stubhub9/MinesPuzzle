@@ -118,7 +118,7 @@ namespace MinesPuzzle
             AddHandler ( ButtonBase.MouseRightButtonDownEvent, new RoutedEventHandler ( OnPuzzleButtonRightMouseDown ) );
 
             _puzzleLogic = new PuzzleLogic ( numberOfRows, numberOfMines );
-            _puzzleLogic.ThePuzzleCells.UpdateGrid += UpdateTiles;
+            _puzzleLogic.ThePuzzleCells.UpdatePuzzleGridEvent += UpdateTiles;
 
             SetupThePuzzleGridStructure ( numberOfRows );
         }
@@ -141,13 +141,19 @@ namespace MinesPuzzle
 
             var buttonStyle = (Style)Resources ["PuzzleButtonStyle"];
 
-            var puzzleCellArray = _puzzleLogic.PuzzleCellArray;
+            //var puzzleCellArray = _puzzleLogic.PuzzleCellArray;
             //  Now add the buttons in.
             for ( var row = 0; row < numberOfRows; row++ )
             {
                 for ( var col = 0; col < numberOfRows; col++ )
                 {
-                    var tag = puzzleCellArray [row, col];
+                    //var tag = puzzleCellArray [row, col];
+//TODO:  ?? Replace new PuzzleCell with a tuple or Point of Row, Col  ??
+                    var tag = new PuzzleCell ()
+                    {
+                        Row = row,
+                        Col = col,
+                    };
                     var button = new Button
                     {
                         FontSize = 24,
@@ -232,12 +238,7 @@ namespace MinesPuzzle
             }
         }
 
-        /// <summary>
-        /// TODO:  REDO:  using LINQ & IEnumerables  
-        /// ?save this old method as an alternate?? or is that what git is for??  re:  main branch!!!
-        /// </summary>
-        /// <param name="tile"></param>
-        /// <param name="cell"></param>
+
         void UpdateTiles_Boom ( Button tile, PuzzleCell cell )
         {
             //  This should be the mine; followed by the mine list.
