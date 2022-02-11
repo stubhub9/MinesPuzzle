@@ -109,13 +109,13 @@ namespace MinesPuzzle
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .819 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .721 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .781 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .72 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .78 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .60 );
+            gradStop = new GradientStop ( Color.FromRgb ( 60, 80, 170 ), .64 );
             gradStops_Safed.Add ( gradStop );
-            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .599 );
+            gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .639 );
             gradStops_Safed.Add ( gradStop );
             gradStop = new GradientStop ( Color.FromRgb ( 255, 180, 80 ), .541 );
             gradStops_Safed.Add ( gradStop );

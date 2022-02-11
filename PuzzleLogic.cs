@@ -43,9 +43,15 @@ namespace MinesPuzzle
         internal PuzzleStatus GameStatus
         { get => _puzzleStatus; }
 
+
+
+
         //  Provides the tags for the PuzzleGrid buttons.
-        public PuzzleCell [,] PuzzleCellArray
-        { get => _puzzleCells.PuzzleCellArray; }
+        //public PuzzleCell [,] PuzzleCellArray
+        //{ get => _puzzleCells.PuzzleCellArray; }
+//TODO:  DO I NEED THIS????????????????????????????????????????????????????
+
+
 
         internal PuzzleCells ThePuzzleCells
         { get => _puzzleCells; }
@@ -71,7 +77,7 @@ namespace MinesPuzzle
         private void InitializeVars ( int numberOfRows, int numberOfMines )
         {
             _puzzleCells = new PuzzleCells ( numberOfRows, numberOfMines );
-            _puzzleCells.UpdateGrid += UpdatePuzzleStatus;
+            _puzzleCells.UpdatePuzzleGridEvent += UpdatePuzzleStatus;
 
             _puzzleStatus = PuzzleStatus.GameNew;
             _elapsedTime = 0;
@@ -87,6 +93,9 @@ namespace MinesPuzzle
         #region  Public Methods
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
 
+
+        //TODO??  IReady ??
+        //  Post constructor initialization.
         public void Ready ()
         {
             _puzzleCells.Ready ();
@@ -95,9 +104,8 @@ namespace MinesPuzzle
         }
 
 
-
-
-        
+        //???  Doesn't "public" imply "Entry Point"???????????
+        //  Entry point:  called from PuzzleGrid.OnPuzzleButtonClick
         public void TileWasSelected ( int row, int col )
         {
             if ( PuzzleStatusCheck () )
@@ -108,11 +116,12 @@ namespace MinesPuzzle
 
 
 
+        //  Entry point:  called from PuzzleGrid.OnPuzzleButtonRightMouseDown
         public void TileWasRightClicked ( int row, int col )
         {
             if ( PuzzleStatusCheck () )
             {
-                _puzzleCells.ToggleCellStatusAndSusCellsCount ( row, col );
+                _puzzleCells.CellStatus_ToggleSuspected_RightClicked ( row, col );
             }
         }
         #endregion

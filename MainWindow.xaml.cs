@@ -88,7 +88,7 @@ namespace MinesPuzzle
             _puzzleGrid.Width = 600;
 
 
-            _puzzleGrid.ThePuzzleLogic.ThePuzzleCells.UpdateGrid += UpdateMinesDisplay;
+            _puzzleGrid.ThePuzzleLogic.ThePuzzleCells.UpdatePuzzleGridEvent += UpdateMinesDisplay;
             _puzzleGrid.ThePuzzleLogic.UpdateTimeDisplay += UpdateTimeDisplay;
             _puzzleGrid.ThePuzzleLogic.Ready ();
         }
