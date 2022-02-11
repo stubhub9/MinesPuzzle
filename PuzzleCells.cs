@@ -204,6 +204,10 @@ namespace MinesPuzzle
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
 
 
+        #region Toggle Method Group
+        //  *****       Toggle Method Group        *****          *****          *****          *****          *****       Toggle Method Group        *****          *****          *****  
+
+
         /// <summary>
         /// Toggles suspected/ hidden cellstatus for right clicks.
         /// Fires a delegate for the UI minecount display. 
@@ -215,7 +219,7 @@ namespace MinesPuzzle
 
             PuzzleCell cell = _puzzleCellsList [GetListIndexByRowCol ( row, col )];
 
-            if ( ( cell.CellStatus != CellStatus.Hidden ) || ( cell.CellStatus != CellStatus.Suspected ) )
+            if ( !(( cell.CellStatus == CellStatus.Hidden ) || ( cell.CellStatus == CellStatus.Suspected )) )
             {
                 return;
             }
@@ -246,7 +250,8 @@ namespace MinesPuzzle
             }
             _updatedCellsList.Add (cell);
         }
-
+        //  End of Toggle Method Group
+        #endregion
 
 
         /// <summary>
@@ -268,7 +273,6 @@ namespace MinesPuzzle
 
             if ( selectedCell.CellValue == CellValue.Mine )
             {
-                // TODO:??  Could replace row, col params with a field??
                 UpdateSelectedCell_Mine ( row, col );
             }
 
@@ -278,61 +282,6 @@ namespace MinesPuzzle
             }
             OnPuzzleCellsChanged ();
         }
-
-
-        /// <summary>
-        /// Return a list of ZeroCell bonus reveals.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        /// <returns></returns>
-        List<PuzzleCell> UpdateSelectedCell_ZeroCell ( int row, int col )
-        {
-            var zeroCellBonusRevealList = new List<PuzzleCell> ();
-            var zeroCellPoints = new Queue<(int Row, int Col)> ();
-            zeroCellPoints.Enqueue ( (row, col) );
-            var keepChecking = false;
-            do
-            {
-                var zeroCell = zeroCellPoints.Dequeue ();
-                var r = zeroCell.Row;
-                var c = zeroCell.Col;
-
-                IEnumerable<PuzzleCell> queryAdjacentPuzzleCells =
-                    from cell in _puzzleCellsList
-                    where ( ( cell.CellStatus >= CellStatus.Hidden )
-                    && ( cell.Row >= r - 1 ) && ( cell.Row <= r + 1 ) )
-                    && ( ( cell.Col >= c - 1 ) && ( cell.Col <= c + 1 ) )
-                    && !( ( cell.Col == c ) && ( cell.Row == r ) )
-                    select cell;
-
-                foreach ( var iCell in queryAdjacentPuzzleCells )
-                {
-                    var cell1 = iCell;
-
-                    //  Process the collection to not be Suspected.
-                    if ( cell1.CellStatus == CellStatus.Suspected )
-                    {
-                        cell1.CellStatus = CellStatus.Hidden;
-                        _suspectedMinesCount++;
-                    }
-
-                    //  Ignore previously Revealed cells.
-                    if ( cell1.CellStatus == CellStatus.Hidden )
-                    {
-                        zeroCellBonusRevealList.Add ( cell1 );
-
-                        if ( iCell.CellValue == 0 )
-                        {
-                            zeroCellPoints.Enqueue ( (iCell.Row, iCell.Col) );
-                            keepChecking = true;
-                        }
-                    }
-                }
-            } while ( keepChecking );
-            return zeroCellBonusRevealList;
-        }
-
 
 
 
@@ -346,6 +295,7 @@ namespace MinesPuzzle
         void UpdateSelectedCell_Mine ( int row, int col )
         {
             _hiddenSafeCellsCount = -_numberOfMines;
+            _haveBoom = true;
 
             IEnumerable<PuzzleCell> queryAllMinedCells =
                 from cell in _puzzleCellsList
@@ -384,22 +334,18 @@ namespace MinesPuzzle
         {
             var revealedCells = new List<PuzzleCell> ();
             revealedCells.Add ( cell );
-            //  ZeroCells reveal additional cells.
-
-
-            //TODO:??  Shall RevealCell process ALL cells resulting from a legal selection???????????????????????????????????????????
 
             if ( cell.CellValue == 0 )
             {
-                revealedCells.AddRange (
-                    UpdateSelectedCell_ZeroCell ( cell.Row, cell.Col ) );
+                revealedCells.AddRange ( ZeroCellBonusReveal ( cell.Row, cell.Col ) );
             }
 
 
             foreach ( var iCell in revealedCells )
             {
-                cell.CellStatus = CellStatus.Revealed;
-                _updatedCellsList.Add ( cell );
+                var cell1 = iCell;
+                cell1.CellStatus = CellStatus.Revealed;
+                _updatedCellsList.Add ( cell1 );
                 _hiddenSafeCellsCount--;
 
                 //  When the game is WON; the UI Mines display should be zero.
@@ -422,6 +368,54 @@ namespace MinesPuzzle
         //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****  
 
         /// <summary>
+        ///  Provides a List of BonusRevealCells
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        List<PuzzleCell> ZeroCellBonusReveal ( int row, int col )
+        {
+            var zeroCellPoints = new Queue<(int Row, int Col)> ();
+            zeroCellPoints.Enqueue ( (row, col) );
+            var zeroBonusCells = new List<PuzzleCell> ();
+            var adjacentCells = new List<PuzzleCell> ();
+            do
+            {
+                adjacentCells = new List<PuzzleCell> ();
+                var point = zeroCellPoints.Dequeue ();
+                adjacentCells.AddRange ( FindAdjacentCells_puzzleCellsList ( point.Row, point.Col ) );
+                foreach ( var iCell in adjacentCells )
+                {
+                    if (( !zeroBonusCells.Contains (iCell) ) 
+                        && ( iCell.CellStatus != CellStatus.Revealed) 
+                        && !(( iCell.Row == row ) && ( iCell.Col == col ) ) )
+                    {
+                        zeroBonusCells.Add ( iCell );
+                        if ( iCell.CellValue == 0 )
+                        {
+                            zeroCellPoints.Enqueue (( iCell.Row, iCell.Col ) );
+                        }
+                    }
+                }
+            } while ( zeroCellPoints.Count > 0 );
+
+            //??  Safer to do this here.
+            var returnList = new List<PuzzleCell> ();
+            foreach ( var iCell in zeroBonusCells )
+            {
+                var cell = iCell;
+                if ( cell.CellStatus == CellStatus.Suspected )
+                {
+                    cell.CellStatus = CellStatus.Hidden;
+                    _suspectedMinesCount++;
+                }
+                returnList.Add ( cell );
+            }
+            return returnList;
+        }
+
+
+        /// <summary>
         /// Returns all cells adjacent to the row and column of the center square.
         /// </summary>
         /// <param name="row"></param>
@@ -438,14 +432,12 @@ namespace MinesPuzzle
                 && !( ( cell.Col == col ) && ( cell.Row == row ) )
                 select cell;
 
-            foreach ( var cell in queryAdjacentPuzzleCells )
-            {
-                adjacentCells.Add ( cell );
-            }
-
+            adjacentCells.AddRange ( queryAdjacentPuzzleCells );
             return adjacentCells;
         }
 
+
+        #region GetListIndexByRowCol Method Group
 
         //   Use as an indexer/ enumerator for the _puzzleCellsList.
         int GetListIndexByRowCol ( int row, int col )
@@ -466,7 +458,7 @@ namespace MinesPuzzle
             return GetListIndexByRowCol ( point.Item1, point.Item2 );
         }
 
-
+        #endregion
 
         #endregion  //  End Private Helper Methods
 

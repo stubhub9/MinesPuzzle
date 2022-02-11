@@ -59,12 +59,6 @@ namespace MinesPuzzle
         public bool Equals ( PuzzleCell other )
         {
             return ( ( this.Row == other.Row ) && ( this.Col == other.Col ) );
-
-            //throw new NotImplementedException ();
-
-            //  ?? Because PuzzleCell is a struct, checking:
-            //  "other== null" was an error?? 
-            //  and "if ( other is PuzzleCell )" isn't neccesary.  ??
         }
 
         public override bool Equals ( object otherObject )
@@ -84,8 +78,10 @@ namespace MinesPuzzle
         //  Provide hashcode that tracks with Equals (object).
         public override int GetHashCode ()
         {
+            //TODO:??  Is this a FLAW; without a TupleDeconstructor somewhere??????????????????????????
             return Tuple.Create ( Row, Col ).GetHashCode ();
             //return base.GetHashCode ();
+            // this.Row*1000 + this.Col
 
         }
 
