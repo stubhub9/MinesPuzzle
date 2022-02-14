@@ -24,7 +24,7 @@ namespace MinesPuzzle
     /// <summary>
     /// Interaction logic for PuzzleGrid.xaml
     ///  Create a grid with buttons that can added to the visual. 
-    ///  Update the buttons as the game progresses, with the results from PuzzleLogic..
+    ///  Update the buttons as the game progresses, with the results from PuzzleLogic and PuzzleCells.
     /// </summary>
     //public partial class PuzzleGrid : UserControl
     public partial class PuzzleGrid : Grid
@@ -73,7 +73,7 @@ namespace MinesPuzzle
             var b = e.Source as Button;
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
-            _puzzleLogic.TileWasSelected ( row, col );
+            _puzzleLogic.TileWasSelected_LeftClick ( row, col );
         }
 
 
@@ -100,7 +100,6 @@ namespace MinesPuzzle
         }
         //  End of Events  Methods group
         #endregion
-
 
 
         #region  Constructor Method Group
@@ -181,9 +180,6 @@ namespace MinesPuzzle
             //  End SetupThePuzzleGridStructure method.
         }
         #endregion
-
-
-
 
 
         #region  Private   Methods

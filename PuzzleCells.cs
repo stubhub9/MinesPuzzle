@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 namespace MinesPuzzle
 {
     /// <summary>
-    /// IQueryable 1D List of sequential full rows.
+    /// Logic for interacting with the PuzzleCells collection.
     /// </summary>
     class PuzzleCells
-    //class PuzzleCellsA
-    //class PuzzleCellsA : IEnumerable<PuzzleCell>
+
     {
 
         #region  Events group
@@ -20,19 +19,17 @@ namespace MinesPuzzle
 
         public event EventHandler<PuzzleCellsEventArgs> UpdatePuzzleGridEvent;
 
-        //void OnPuzzleCellsChanged ( int mines, List<PuzzleCell> cells )
+
         void OnPuzzleCellsChanged ()
         {
             var e = new PuzzleCellsEventArgs ()
             {
-                /*Cells = cells,*/
                 Cells = _updatedCellsList,
                 Mines = _suspectedMinesCount.ToString (),
-                /*Mines = mines.ToString (),*/
                 AllCellsRevealed = ( _hiddenSafeCellsCount == 0 ),
                 HasBoom = _haveBoom,
             };
-            //  object  sender, EventArgs  e
+
             UpdatePuzzleGridEvent?.Invoke ( this, e );
             foreach ( var iCell in _updatedCellsList )
             {
@@ -46,7 +43,6 @@ namespace MinesPuzzle
 
         #region  Private Fields
         //  *****          Private Fields          *****          *****          *****          *****          *****          *****          Private Fields          *****           *****
-        //  Property fields
 
         //  Game won when zero.
         private int _hiddenSafeCellsCount;
@@ -63,16 +59,12 @@ namespace MinesPuzzle
         //  Equals number of mines minus number of suspected cells; updates UI.
         private int _suspectedMinesCount;
 
-        //  Determined by constructor params; don't need more params.
+        //  Set by constructor params; don't need more params.
         int _numberOfRows;
         int _numberOfMines;
 
-
-
         //  Only used for mine placement, but want to restrict new instantances.
         Random _random;
-
-
         #endregion
 
         #region Properties
@@ -86,11 +78,11 @@ namespace MinesPuzzle
             }
         }
 
-
         #endregion
 
         #region  Constructor Method Group
-        //  *****          Constructor          *****          *****          *****          *****          *****          *****          *****          *****          *****          *****
+        //  *****          Constructor          *****          *****          *****          *****          *****          *****           *****          Constructor          *****           *****
+
         public PuzzleCells ( int rows = 10, int mines = 15 )
         {
             Constructor_InitializeVars ( rows, mines );
@@ -113,7 +105,7 @@ namespace MinesPuzzle
         }
 
 
-        //  Creates the base List model of default PuzzleCells; ordered by row and column.
+        //  Creates the base model of default PuzzleCells; ordered by row and column.
         void Constructor_InitializePuzzleCellsList ()
         {
             _puzzleCellsList.Clear ();
@@ -150,6 +142,7 @@ namespace MinesPuzzle
                 var r = _random.Next ( _numberOfRows );
                 var c = _random.Next ( _numberOfRows );
                 var isDistinct = true;
+
                 foreach ( var iPoint in pointsList )
                 {
                     if ( ( r == iPoint.Item1 ) && ( c == iPoint.Item2 ) )
@@ -198,60 +191,9 @@ namespace MinesPuzzle
         //  end Constructor method group.
         #endregion
 
-
-
         #region Public Methods
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
-
-
-        #region Toggle Method Group
-        //  *****       Toggle Method Group        *****          *****          *****          *****          *****       Toggle Method Group        *****          *****          *****  
-
-
-        /// <summary>
-        /// Toggles suspected/ hidden cellstatus for right clicks.
-        /// Fires a delegate for the UI minecount display. 
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="col"></param>
-        public void CellStatus_ToggleSuspected_RightClicked ( int row, int col )
-        {
-
-            PuzzleCell cell = _puzzleCellsList [GetListIndexByRowCol ( row, col )];
-
-            if ( !(( cell.CellStatus == CellStatus.Hidden ) || ( cell.CellStatus == CellStatus.Suspected )) )
-            {
-                return;
-            }
-
-            CellStatus_ToggleSuspected ( cell );
-            OnPuzzleCellsChanged ();
-        }
-
-        /// <summary>
-        /// Toggles the cell's status; adjusts SusMinesCount.
-        /// </summary>
-        /// <param name="cell"></param>
-        void CellStatus_ToggleSuspected ( PuzzleCell cell )
-        {
-
-            switch ( cell.CellStatus )
-            {
-                //  Only hidden and suspected cells are affected, ignoring all others.
-                case CellStatus.Hidden:
-                    cell.CellStatus = CellStatus.Suspected;
-                    _suspectedMinesCount--;
-                    break;
-
-                case CellStatus.Suspected:
-                    cell.CellStatus = CellStatus.Hidden;
-                    _suspectedMinesCount++;
-                    break;
-            }
-            _updatedCellsList.Add (cell);
-        }
-        //  End of Toggle Method Group
-        #endregion
+        // Public methods end with OnPuzzleCellsChanged.
 
 
         /// <summary>
@@ -264,7 +206,44 @@ namespace MinesPuzzle
         }
 
 
-        public void UpdateSelectedCell ( int row, int col )
+        /// <summary>
+        /// Toggles suspected/ hidden cellstatus for right clicks.
+        /// Fires a delegate for the UI minecount display. 
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        public void ToggleSuspected_RightClicked ( int row, int col )
+        {
+
+            PuzzleCell cell = _puzzleCellsList [GetListIndexByRowCol ( row, col )];
+
+            if ( ( cell.CellStatus == CellStatus.Hidden ) || ( cell.CellStatus == CellStatus.Suspected ) )
+            {
+                switch ( cell.CellStatus )
+                {
+                    case CellStatus.Hidden:
+                        cell.CellStatus = CellStatus.Suspected;
+                        _suspectedMinesCount--;
+                        break;
+
+                    case CellStatus.Suspected:
+                        cell.CellStatus = CellStatus.Hidden;
+                        _suspectedMinesCount++;
+                        break;
+                }
+
+                _updatedCellsList.Add ( cell );
+                OnPuzzleCellsChanged ();
+            }
+        }
+
+
+        /// <summary>
+        /// Updates the cells affected by this selection.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="col"></param>
+        public void UpdateSelectedCell_LeftClicked ( int row, int col )
         {
             var indexSelected = GetListIndexByRowCol ( row, col );
             var selectedCell = _puzzleCellsList [indexSelected];
@@ -282,7 +261,6 @@ namespace MinesPuzzle
             }
             OnPuzzleCellsChanged ();
         }
-
 
 
         /// <summary>
@@ -330,6 +308,10 @@ namespace MinesPuzzle
         }
 
 
+        /// <summary>
+        /// Changes the state of updated cells; checks if game is won.
+        /// </summary>
+        /// <param name="cell"></param>
         void UpdateSelectedCell_RevealCell ( PuzzleCell cell )
         {
             var revealedCells = new List<PuzzleCell> ();
@@ -348,9 +330,11 @@ namespace MinesPuzzle
                 _updatedCellsList.Add ( cell1 );
                 _hiddenSafeCellsCount--;
 
+                ///TODO:??  WHETHER to bury this "Business Logic" HERE; or as a property??
                 //  When the game is WON; the UI Mines display should be zero.
                 if ( AllCellsRevealed )
-                { _suspectedMinesCount = 0; }
+                {
+                    _suspectedMinesCount = 0; }
             }
         }
 
@@ -386,14 +370,14 @@ namespace MinesPuzzle
                 adjacentCells.AddRange ( FindAdjacentCells_puzzleCellsList ( point.Row, point.Col ) );
                 foreach ( var iCell in adjacentCells )
                 {
-                    if (( !zeroBonusCells.Contains (iCell) ) 
-                        && ( iCell.CellStatus != CellStatus.Revealed) 
-                        && !(( iCell.Row == row ) && ( iCell.Col == col ) ) )
+                    if ( ( !zeroBonusCells.Contains ( iCell ) )
+                        && ( iCell.CellStatus != CellStatus.Revealed )
+                        && !( ( iCell.Row == row ) && ( iCell.Col == col ) ) )
                     {
                         zeroBonusCells.Add ( iCell );
                         if ( iCell.CellValue == 0 )
                         {
-                            zeroCellPoints.Enqueue (( iCell.Row, iCell.Col ) );
+                            zeroCellPoints.Enqueue ( (iCell.Row, iCell.Col) );
                         }
                     }
                 }

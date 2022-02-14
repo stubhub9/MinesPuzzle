@@ -10,7 +10,9 @@ using System.Runtime.CompilerServices;
 
 namespace MinesPuzzle
 {
-
+    /// <summary>
+    /// Interacts with the UI, handles click events and timer.
+    /// </summary>
     public class PuzzleLogic //: INotifyPropertyChanged
     {
         #region Events
@@ -32,7 +34,6 @@ namespace MinesPuzzle
         private PuzzleStatus _puzzleStatus;
 
         #endregion
-
 
         #region  Properties
         //  *****          Properties          *****          *****          *****          *****          *****          Properties          *****          *****          *****          *****
@@ -87,9 +88,6 @@ namespace MinesPuzzle
         //  End Constructor Method Group
         #endregion 
 
-
-
-
         #region  Public Methods
         //  *****       Public Methods        *****          *****          *****          *****          *****       Public Methods        *****          *****          *****  
 
@@ -104,13 +102,12 @@ namespace MinesPuzzle
         }
 
 
-        //???  Doesn't "public" imply "Entry Point"???????????
-        //  Entry point:  called from PuzzleGrid.OnPuzzleButtonClick
-        public void TileWasSelected ( int row, int col )
+
+        public void TileWasSelected_LeftClick ( int row, int col )
         {
             if ( PuzzleStatusCheck () )
             {
-                _puzzleCells.UpdateSelectedCell ( row, col );
+                _puzzleCells.UpdateSelectedCell_LeftClicked ( row, col );
             }
         }
 
@@ -121,11 +118,10 @@ namespace MinesPuzzle
         {
             if ( PuzzleStatusCheck () )
             {
-                _puzzleCells.CellStatus_ToggleSuspected_RightClicked ( row, col );
+                _puzzleCells.ToggleSuspected_RightClicked ( row, col );
             }
         }
         #endregion
-
 
         #region  Private   Methods
         //  *****       Private   Methods        *****          *****          *****          *****          *****       Private   Methods        *****          *****          *****      

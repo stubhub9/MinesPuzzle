@@ -19,7 +19,7 @@ namespace MinesPuzzle
         internal CellValue CellValue { get; set; }
         public CellStatus CellStatus { get; set; }
 
-        //  Constructors  ******************************************************************************
+        //  Constructor  ******************************************************************************
 
         //  Used for mine placement.
         internal PuzzleCell ( int row, int col, CellValue value, CellStatus status )
@@ -29,6 +29,7 @@ namespace MinesPuzzle
             CellValue = value;
             CellStatus = status;
         }
+
 
         #region  Interface Methods Group
         //  Implement IComparable<this> based on Row and Col as primary keys.
