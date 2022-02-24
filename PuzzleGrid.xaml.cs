@@ -24,7 +24,7 @@ namespace MinesPuzzle
     /// <summary>
     /// Interaction logic for PuzzleGrid.xaml
     ///  Create a grid with buttons that can added to the visual. 
-    ///  Update the buttons as the game progresses, with the results from PuzzleLogic..
+    ///  Update the buttons as the game progresses, with the results from PuzzleLogic and PuzzleCells.
     /// </summary>
     //public partial class PuzzleGrid : UserControl
     public partial class PuzzleGrid : Grid
@@ -40,7 +40,7 @@ namespace MinesPuzzle
         /// </summary>
         private Button [,] _puzzleGridTiles;
 
-        PuzzleLogic _puzzleLogic;
+        readonly PuzzleLogic _puzzleLogic;
 
         #endregion
 
@@ -73,7 +73,7 @@ namespace MinesPuzzle
             var b = e.Source as Button;
             var row = (int)b.GetValue ( RowProperty );
             var col = (int)b.GetValue ( ColumnProperty );
-            _puzzleLogic.TileWasSelected ( row, col );
+            _puzzleLogic.TileWasSelected_LeftClick ( row, col );
         }
 
 
@@ -82,15 +82,14 @@ namespace MinesPuzzle
         //  Flag or unflag a hidden cell as being presumed as a mine. 
         private void OnPuzzleButtonRightMouseDown ( object sender, RoutedEventArgs e )
         {
-            Button button = e.Source as Button;
-
-            //  Mouse right button down, was targeting non-button elements; re grid through margins..
-            if ( button is null )
-            { return; }
-
-            var row = (int)button.GetValue ( RowProperty );
-            var col = (int)button.GetValue ( ColumnProperty );
-            _puzzleLogic.TileWasRightClicked ( row, col );
+            //  Mouse right button down, was targeting non-button elements; re:  grid through margins.
+            if ( ( e.Source is Button button )
+                && !( button is null ) )
+            {
+                var row = (int)button.GetValue ( RowProperty );
+                var col = (int)button.GetValue ( ColumnProperty );
+                _puzzleLogic.TileWasRightClicked ( row, col );
+            }
         }
 
 
@@ -100,7 +99,6 @@ namespace MinesPuzzle
         }
         //  End of Events  Methods group
         #endregion
-
 
 
         #region  Constructor Method Group
@@ -148,7 +146,7 @@ namespace MinesPuzzle
                 for ( var col = 0; col < numberOfRows; col++ )
                 {
                     //var tag = puzzleCellArray [row, col];
-//TODO:  ?? Replace new PuzzleCell with a tuple or Point of Row, Col  ??
+                    //TODO:  ?? Replace new PuzzleCell with a tuple or Point of Row, Col  ??
                     var tag = new PuzzleCell ()
                     {
                         Row = row,
@@ -162,7 +160,7 @@ namespace MinesPuzzle
                         Background = PuzzleColors.TileBrush_Unknown,
                         Height = 32,
                         Width = 32,
-                        BorderThickness = new Thickness (1,1,1,1),
+                        BorderThickness = new Thickness ( 1, 1, 1, 1 ),
                         //BorderBrush= PuzzleColors.Color_Unknown,
                         /*TODO:  Remove troubleshooting. */
                         //Content = ((int) tag.CellValue).ToString (),
@@ -181,9 +179,6 @@ namespace MinesPuzzle
             //  End SetupThePuzzleGridStructure method.
         }
         #endregion
-
-
-
 
 
         #region  Private   Methods
