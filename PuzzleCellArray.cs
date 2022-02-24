@@ -8,14 +8,23 @@ using System.Threading.Tasks;
 namespace MinesPuzzle
 {
     /// <summary>
-    /// Provides an IEnumerable 2D array of the PuzzleCell model.
+    /// TODO:  Develop and Integrate:  Provides an IEnumerable 2D array of the PuzzleCell model.
     /// </summary>
-    class PuzzleCellArray : IEnumerable
-    //, IEnumerable<PuzzleCell>
-    //?? : Array, IEnumerable  ??
+    class PuzzleCellArray : ICollection<PuzzleCell>,  IEnumerable, IEnumerable<PuzzleCell>
+    //?? : Array  ??
+
+    //  IPuzzleCells Collection:
+    //  Properties:  RowCount, ColCount  (?xy?)
+    //  Write/ Update from List<Puzz>)  & a
+    //  Read with List<Puzz> return
     {
+
         //  Field
-        PuzzleCell [,] _puzzleCellArray;
+        readonly PuzzleCell [,] _puzzleCellArray;
+
+        public int Count =>   (int)_puzzleCellArray.LongLength;
+
+        public bool IsReadOnly => throw new NotImplementedException ();
 
         //  Add an indexer.
         public PuzzleCell this [int indexRow, int indexCol]
@@ -48,10 +57,10 @@ namespace MinesPuzzle
             }
         }
 
-        #region  IEnumerable  Method  Group
-        public PuzzleCellArray_Enum GetEnumerator ()
+        #region  IEnumerables  Method  Group
+        public PuzzleCellArray_Enumerator GetEnumerator ()
         {
-            return new PuzzleCellArray_Enum ( _puzzleCellArray );
+            return new PuzzleCellArray_Enumerator ( _puzzleCellArray );
         }
 
 
@@ -59,7 +68,18 @@ namespace MinesPuzzle
         {
             return (IEnumerator)GetEnumerator ();
         }
+
+
+        IEnumerator<PuzzleCell> IEnumerable<PuzzleCell>.GetEnumerator ()
+        {
+            return (IEnumerator <PuzzleCell>)GetEnumerator ();
+            //throw new NotImplementedException ();
+        }
         #endregion
+
+
+
+
 
         #region  Public  PuzzleArray  &  Collection  Method  Group
         //TODO:??  Add PuzzleCells methods                            ??????????????????????????????????????????
@@ -81,7 +101,30 @@ namespace MinesPuzzle
             return new PuzzleCell ();
         }
 
+        public void Add ( PuzzleCell item )
+        {
+            throw new NotImplementedException ();
+        }
 
+        public void Clear ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public bool Contains ( PuzzleCell item )
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void CopyTo ( PuzzleCell [] array, int arrayIndex )
+        {
+            throw new NotImplementedException ();
+        }
+
+        public bool Remove ( PuzzleCell item )
+        {
+            throw new NotImplementedException ();
+        }
     }
 
     #endregion
@@ -91,7 +134,7 @@ namespace MinesPuzzle
     /// <summary>
     /// IEnumerator helper class
     /// </summary>
-    public class PuzzleCellArray_Enum : IEnumerator
+    public class PuzzleCellArray_Enumerator : IEnumerator, IEnumerator<PuzzleCell>
     {
         #region   Fields
         public PuzzleCell [,] _puzzleCells;
@@ -129,7 +172,7 @@ namespace MinesPuzzle
 
 
         //  *****          Constructor          *****          *****          *****          *****          *****          *****           *****          Constructor          *****           *****
-        public PuzzleCellArray_Enum ( PuzzleCell [,] array )
+        public PuzzleCellArray_Enumerator ( PuzzleCell [,] array )
         {
             _puzzleCells = array;
         }
@@ -161,6 +204,12 @@ namespace MinesPuzzle
             positionCol = -1;
         }
         #endregion
+
+
+
+        //  For IEnumerable<T>
+        void IDisposable.Dispose () { }
     }
+
 
 }

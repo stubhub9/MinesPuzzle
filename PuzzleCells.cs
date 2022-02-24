@@ -44,14 +44,19 @@ namespace MinesPuzzle
         #region  Private Fields
         //  *****          Private Fields          *****          *****          *****          *****          *****          *****          Private Fields          *****           *****
 
+        //TODO:  Replace the list with a custom class based on an array of PuzzleCell rows and columns.
+        //TODO:  ?? Move array & collections type of methods to the PuzzleCellArray from this PuzzleCells_Logic.
+        //  List of all PuzzleCells, ordered by a sequential list of full rows.
+        List<PuzzleCell> _puzzleCellsList;
+        PuzzleCellArray _puzzleCellsArray;
+
+
         //  Game won when zero.
         private int _hiddenSafeCellsCount;
 
         // Game lost when true.
         private bool _haveBoom;
 
-        //  List of all PuzzleCells, ordered by a sequential list of full rows.
-        List<PuzzleCell> _puzzleCellsList;
 
         //  List of cells, that have been updated since the last OnPuzzleCellsChanged.
         List<PuzzleCell> _updatedCellsList;
@@ -262,6 +267,26 @@ namespace MinesPuzzle
             OnPuzzleCellsChanged ();
         }
 
+        void GameWon_UpdateMines ()
+        {
+            //  Update UI counter.
+            _suspectedMinesCount = 0;
+
+            //  Update UI by revealing mines the nice way.
+            IEnumerable<PuzzleCell> queryAllMinedCells =
+                from cell in _puzzleCellsList
+                where ( ( cell.CellValue == CellValue.Mine )
+                && ( cell.CellStatus == CellStatus.Hidden ) )
+                select cell;
+
+            foreach ( var iCell in queryAllMinedCells )
+            {
+                var cell = iCell;
+                cell.CellStatus = CellStatus.Suspected;
+                _updatedCellsList.Add ( cell );
+            }
+        }
+
 
         /// <summary>
         /// UpdatesList contains the Boom cell followed by the other mined cells.
@@ -314,8 +339,10 @@ namespace MinesPuzzle
         /// <param name="cell"></param>
         void UpdateSelectedCell_RevealCell ( PuzzleCell cell )
         {
-            var revealedCells = new List<PuzzleCell> ();
-            revealedCells.Add ( cell );
+            var revealedCells = new List<PuzzleCell>
+            {
+                cell
+            };
 
             if ( cell.CellValue == 0 )
             {
@@ -330,11 +357,10 @@ namespace MinesPuzzle
                 _updatedCellsList.Add ( cell1 );
                 _hiddenSafeCellsCount--;
 
-                ///TODO:??  WHETHER to bury this "Business Logic" HERE; or as a property??
-                //  When the game is WON; the UI Mines display should be zero.
                 if ( AllCellsRevealed )
                 {
-                    _suspectedMinesCount = 0; }
+                    GameWon_UpdateMines ();
+                }
             }
         }
 
@@ -362,12 +388,12 @@ namespace MinesPuzzle
             var zeroCellPoints = new Queue<(int Row, int Col)> ();
             zeroCellPoints.Enqueue ( (row, col) );
             var zeroBonusCells = new List<PuzzleCell> ();
-            var adjacentCells = new List<PuzzleCell> ();
+            //var adjacentCells = new List<PuzzleCell> ();
             do
             {
-                adjacentCells = new List<PuzzleCell> ();
-                var point = zeroCellPoints.Dequeue ();
-                adjacentCells.AddRange ( FindAdjacentCells_puzzleCellsList ( point.Row, point.Col ) );
+                var adjacentCells = new List<PuzzleCell> ();
+                var (Row, Col) = zeroCellPoints.Dequeue ();
+                adjacentCells.AddRange ( FindAdjacentCells_puzzleCellsList ( Row, Col ) );
                 foreach ( var iCell in adjacentCells )
                 {
                     if ( ( !zeroBonusCells.Contains ( iCell ) )

@@ -60,8 +60,6 @@
     <Compile Include="PuzzleCell.cs" />
     <Compile Include="PuzzleCellArray.cs" />
     <Compile Include="PuzzleCells.cs" />
-    <Compile Include="PuzzleCellsAlpha.cs" />
-    <Compile Include="PuzzleCellsBeta.cs" />
     <Compile Include="PuzzleCellsEventArgs.cs" />
     <Compile Include="PuzzleColors.cs" />
     <Compile Include="PuzzleGrid.xaml.cs">

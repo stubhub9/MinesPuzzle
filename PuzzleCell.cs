@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 namespace MinesPuzzle
 {
     /// <summary>
-    ///  Provides data for PuzzleGrid button tags and the PuzzleLogic matrix.
-    ///  ___int Row, Col,
-    ///  ___enum CellValue, CellStatus
+    /// IEquatable & IComparable struct, with Row, Col, & Cell Value and Status properties.
     /// </summary>
-    public struct PuzzleCell : IEquatable <PuzzleCell> , IComparable<PuzzleCell>
-        //  IEquatable for List.Contains, ...; cell equality based on Row & Col of item.
+    public struct PuzzleCell : IEquatable<PuzzleCell>, IComparable<PuzzleCell>
+    //  IEquatable for List.Contains, ...;
+    //  cell equality based on Row & Col of item.
     {
         public int Row { get; set; }
         public int Col { get; set; }
@@ -62,13 +61,12 @@ namespace MinesPuzzle
             return ( ( this.Row == other.Row ) && ( this.Col == other.Col ) );
         }
 
+
         public override bool Equals ( object otherObject )
         {
-            //Error:  PuzzleCell is non-nullable.
-            //PuzzleCell other = otherObject as PuzzleCell;
-            if ( otherObject is PuzzleCell )
+            if ( otherObject is PuzzleCell other )
             {
-                PuzzleCell other = (PuzzleCell) otherObject;
+                //PuzzleCell other = (PuzzleCell)otherObject;
                 return ( ( this.Row == other.Row ) && ( this.Col == other.Col ) );
             }
             else
